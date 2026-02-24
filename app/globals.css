@@ -1,26 +1,609 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-ivory: #faf8f5;
+  --color-cream: #f5f0eb;
+  --color-sand: #e8e0d8;
+  --color-taupe: #b8a99a;
+  --color-charcoal: #2c2c2c;
+  --color-graphite: #1a1a1a;
+  --color-gold: #c9a96e;
+  --color-gold-light: #d4ba8a;
+  --color-muted: #8a8278;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-ivory);
+  --color-foreground: var(--color-graphite);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-cormorant);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ─── */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ivory);
+  color: var(--color-charcoal);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ─── Keyframes ─── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes lineExpand {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes bag-wiggle {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  15% {
+    transform: scale(1.25) rotate(-8deg);
+  }
+  30% {
+    transform: scale(1.2) rotate(8deg);
+  }
+  45% {
+    transform: scale(1.22) rotate(-5deg);
+  }
+  60% {
+    transform: scale(1.18) rotate(3deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* ─── Cart Drawer ─── */
+@keyframes drawerSlideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes drawerSlideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* ─── Bottom Sheet ─── */
+@keyframes sheetSlideUp {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheetSlideDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes backdropFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes cartItemEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cartItemRemove {
+  to {
+    opacity: 0;
+    transform: translateX(40px) scale(0.94);
+    max-height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+}
+
+/* Cart drawer thin scrollbar */
+.cart-drawer-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sand) transparent;
+}
+.cart-drawer-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+.cart-drawer-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.cart-drawer-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-sand);
+  border-radius: 100px;
+}
+
+/* ─── Checkout Drawer ─── */
+@keyframes checkoutSlideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes checkoutSlideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0.8;
+  }
+}
+
+@keyframes sheetSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheetBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheetSlideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes sheetBackdropOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes sectionCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes checkmarkRing {
+  from {
+    stroke-dashoffset: 283;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes checkmarkDraw {
+  from {
+    stroke-dashoffset: 50;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes confettiBurst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--cx), var(--cy)) scale(0);
+  }
+}
+
+@keyframes successFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+/* Checkout input focus glow */
+.checkout-input {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1.5px solid var(--color-sand);
+}
+.checkout-input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.12);
+}
+
+/* Checkout steps scroll */
+.checkout-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sand) transparent;
+}
+.checkout-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+.checkout-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.checkout-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-sand);
+  border-radius: 100px;
+}
+
+/* ─── Animation Utilities ─── */
+.animate-fade-up {
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-line-expand {
+  animation: lineExpand 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Staggered Delays ─── */
+.delay-1 {
+  animation-delay: 0.1s;
+}
+.delay-2 {
+  animation-delay: 0.2s;
+}
+.delay-3 {
+  animation-delay: 0.3s;
+}
+.delay-4 {
+  animation-delay: 0.4s;
+}
+.delay-5 {
+  animation-delay: 0.5s;
+}
+.delay-6 {
+  animation-delay: 0.6s;
+}
+.delay-7 {
+  animation-delay: 0.7s;
+}
+.delay-8 {
+  animation-delay: 0.8s;
+}
+
+/* ─── Luxury Card Hover ─── */
+.luxury-card {
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.1);
+}
+
+/* ─── Image Zoom on Hover ─── */
+.img-zoom {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-card:hover .img-zoom {
+  transform: scale(1.05);
+}
+
+/* ─── Gold Underline ─── */
+.gold-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.gold-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--color-gold);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gold-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ─── Button Hover Press ─── */
+.btn-press {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-press:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(201, 169, 110, 0.3);
+}
+
+.btn-press:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+}
+
+/* ─── Size Pill ─── */
+.size-pill {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--color-sand);
+  cursor: pointer;
+}
+
+.size-pill:hover {
+  border-color: var(--color-charcoal);
+}
+
+.size-pill.active {
+  background: var(--color-charcoal);
+  color: var(--color-ivory);
+  border-color: var(--color-charcoal);
+}
+
+/* ─── Custom Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-sand);
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-taupe);
+}
+
+/* ─── Color Swatch ─── */
+.color-swatch {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch.active {
+  box-shadow:
+    0 0 0 2px var(--color-ivory),
+    0 0 0 3.5px var(--color-charcoal);
+}
+
+/* ─── Thumbnail ─── */
+.thumb-btn {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+}
+
+.thumb-btn:hover {
+  border-color: var(--color-taupe);
+}
+
+.thumb-btn.active {
+  border-color: var(--color-charcoal);
+}
+
+/* ─── Thumbnail Strip ─── */
+.thumbnail-strip {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.thumbnail-strip::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── View Transitions (Shared Element) ─── */
+
+/* Page crossfade — soft and subtle */
+::view-transition-old(root) {
+  animation: 0.4s cubic-bezier(0.4, 0, 0.2, 1) both vt-fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 0.45s cubic-bezier(0, 0, 0.2, 1) 0.1s both vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Shared element morph — fluid spring physics */
+::view-transition-group(*) {
+  animation-duration: 0.65s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Smooth crossfade between old/new image snapshots */
+::view-transition-image-pair(*) {
+  isolation: auto;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(*) {
+  animation: 0.35s cubic-bezier(0.4, 0, 1, 1) both vt-fade-out;
+}
+
+::view-transition-new(*) {
+  animation: 0.5s cubic-bezier(0, 0, 0.2, 1) 0.15s both vt-fade-in;
 }
