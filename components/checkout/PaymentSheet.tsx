@@ -216,7 +216,7 @@ export default function PaymentSheet({
 
       {/* Sticky CTA */}
       <SheetFooterButton
-        label="Save Payment Method"
+        label="Save payment method"
         onClick={handleSave}
         disabled={!isFormValid}
       />

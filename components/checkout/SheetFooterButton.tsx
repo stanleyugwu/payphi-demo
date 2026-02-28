@@ -25,13 +25,19 @@ export default function SheetFooterButton({
 }: SheetFooterButtonProps) {
   return (
     <div
-      className="absolute bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md rounded-b-[24px]"
-      style={{ zIndex: 10 }}
+      className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md rounded-b-[24px]"
+      style={{
+        zIndex: 10,
+        paddingTop: "1rem",
+        paddingLeft: "1rem",
+        paddingRight: "1rem",
+        paddingBottom: "calc(1rem + env(safe-area-inset-bottom, 0px))",
+      }}
     >
       <button
         onClick={onClick}
         disabled={disabled}
-        className="btn-press w-full py-3.5 rounded-full text-[13px] tracking-[0.15em] uppercase font-medium transition-all"
+        className="btn-press w-full py-3.5 rounded-full text-[13px] font-bold transition-all"
         style={{
           background: CHECKOUT_THEME.primaryColor,
           color: "var(--color-ivory)",

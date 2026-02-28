@@ -6,16 +6,19 @@
   --color-sand: #e8e0d8;
   --color-taupe: #b8a99a;
   --color-charcoal: #2c2c2c;
-  --color-graphite: #1a1a1a;
+  --color-graphite: #292626;
   --color-gold: #c9a96e;
   --color-gold-light: #d4ba8a;
   --color-muted: #8a8278;
+
+  /* App-wide primary font alias (swap this single token to change the main font) */
+  --font-primary: var(--font-bogle);
 }
 
 @theme inline {
   --color-background: var(--color-ivory);
   --color-foreground: var(--color-graphite);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-primary);
   --font-serif: var(--font-cormorant);
 }
 
@@ -29,7 +32,7 @@ html {
 body {
   background: var(--color-ivory);
   color: var(--color-charcoal);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-primary), var(--font-inter), system-ui, sans-serif;
   overflow-x: hidden;
 }
 
@@ -220,6 +223,22 @@ body {
 .cart-drawer-scroll::-webkit-scrollbar-thumb {
   background: var(--color-sand);
   border-radius: 100px;
+}
+
+/* Sheet animation timing defaults */
+.checkout-sheet-wrapper {
+  --sheet-enter-duration: 0.45s;
+  --sheet-exit-duration: 0.35s;
+  --sheet-backdrop-duration: 0.4s;
+}
+
+/* Slower, more visible sheet motion on small screens */
+@media (max-width: 768px) {
+  .checkout-sheet-wrapper {
+    --sheet-enter-duration: 0.62s;
+    --sheet-exit-duration: 0.52s;
+    --sheet-backdrop-duration: 0.5s;
+  }
 }
 
 /* ─── Checkout Drawer ─── */

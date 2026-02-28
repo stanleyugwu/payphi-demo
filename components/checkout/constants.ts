@@ -20,11 +20,11 @@
 
 export const CHECKOUT_THEME = {
   /** Primary brand color (Walmart Blue) */
-  primaryColor: "#0053e2",
+  primaryColor: "#0054E2",
 
-  /** Font stack — falls back gracefully across OSes */
+  /** Font stack uses the global primary alias for easy swapping */
   fontFamily:
-    '"EveryDays Sans", "Bogle", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    "var(--font-primary), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 } as const;
 
 /* ─── 2. Shipping Options & Costs ───────────────────────────── */

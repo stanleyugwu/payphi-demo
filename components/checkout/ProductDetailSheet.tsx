@@ -107,9 +107,7 @@ export default function ProductDetailSheet({
                   width: galleryIdx === i ? 18 : 6,
                   height: 6,
                   background:
-                    galleryIdx === i
-                      ? CHECKOUT_THEME.primaryColor
-                      : "var(--color-taupe)",
+                    galleryIdx === i ? "#000000" : "var(--color-taupe)",
                   opacity: galleryIdx === i ? 1 : 0.4,
                 }}
               />
@@ -327,7 +325,7 @@ export default function ProductDetailSheet({
 
       {/* Sticky footer */}
       <SheetFooterButton
-        label="Update In Cart"
+        label="Update in cart"
         onClick={() => onUpdate(colorIdx, product.sizes[sizeIdx])}
       />
     </div>

@@ -61,6 +61,9 @@ import type { DeliverySummary, PaymentSummary, SheetType } from "./types";
 import type { CardBrand } from "./utils";
 import { formatCurrency, getArrivalDate } from "./utils";
 
+const SHEET_CLOSE_DELAY_DESKTOP_MS = 350;
+const SHEET_CLOSE_DELAY_MOBILE_MS = 400;
+
 /* ================================================================
    COMPONENT
    ================================================================ */
@@ -90,10 +93,15 @@ export default function CheckoutDrawer() {
 
   const closeSheet = useCallback(() => {
     setSheetAnimatingOut(true);
+    const closeDelay =
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 768px)").matches
+        ? SHEET_CLOSE_DELAY_MOBILE_MS
+        : SHEET_CLOSE_DELAY_DESKTOP_MS;
     setTimeout(() => {
       setActiveSheet(null);
       setSheetAnimatingOut(false);
-    }, 350);
+    }, closeDelay);
   }, []);
 
   /* ── persisted selections ── */
@@ -201,6 +209,11 @@ export default function CheckoutDrawer() {
     closeSheet();
   };
 
+  const isShippingSheetActive = activeSheet === "shipping";
+  const isEstimateSheetActive = activeSheet === "estimate";
+  const isDeliverySheetActive = activeSheet === "delivery";
+  const isPaymentSheetActive = activeSheet === "payment";
+
   /* ================================================================
      RENDER
      ================================================================ */
@@ -231,6 +244,7 @@ export default function CheckoutDrawer() {
         className="fixed top-0 right-0 z-999 flex flex-col"
         style={{
           height: "calc(100vh - 24px)",
+          maxHeight: "calc(100dvh - 24px)",
           width: "min(360px, calc(100vw - 24px))",
           background: "var(--color-ivory)",
           boxShadow: "0 8px 40px rgba(0, 0, 0, 0.12)",
@@ -245,16 +259,16 @@ export default function CheckoutDrawer() {
       >
         {/* ─── Header ─── */}
         <div
-          className="flex flex-col px-6 py-4"
+          className="flex flex-col py-4"
           style={{ borderBottom: "1px solid var(--color-sand)" }}
         >
           {/* Progress bar */}
           <div
-            className="w-full flex items-center h-1.5 rounded-full overflow-hidden mb-4"
+            className="w-full flex items-center h-1.5 overflow-hidden mb-4"
             style={{ background: "var(--color-cream)" }}
           >
             <div
-              className="h-full rounded-full transition-all duration-500 ease-out"
+              className="h-full transition-all duration-500 ease-out"
               style={{
                 width: `${progressPercent}%`,
                 background: CHECKOUT_THEME.primaryColor,
@@ -262,7 +276,7 @@ export default function CheckoutDrawer() {
             />
           </div>
 
-          <div className="relative flex items-center justify-center">
+          <div className="relative px-6 flex items-center justify-center">
             <div className="flex items-center gap-2">
               <WalmartLogo />
             </div>
@@ -303,10 +317,7 @@ export default function CheckoutDrawer() {
 
         {/* ─── Footer Sections ─── */}
         {items.length > 0 && (
-          <div
-            className="mt-auto px-6 pt-2 pb-4 flex flex-col"
-            style={{ borderTop: "1px solid var(--color-sand)" }}
-          >
+          <div className="mt-auto px-6 pt-2 pb-4 flex flex-col">
             {/* Shipping */}
             <FooterRow
               title="Shipping"
@@ -318,7 +329,6 @@ export default function CheckoutDrawer() {
               hasValue={!!selectedShipping}
               onClick={() => setActiveSheet("shipping")}
             />
-            <Divider />
 
             {/* Delivery */}
             <FooterRow
@@ -332,7 +342,6 @@ export default function CheckoutDrawer() {
               hasValue={!!selectedDeliverySummary}
               onClick={() => setActiveSheet("delivery")}
             />
-            <Divider />
 
             {/* Payment */}
             <button
@@ -373,7 +382,6 @@ export default function CheckoutDrawer() {
               </div>
               <ChevronIcon className="transition-transform group-hover:translate-x-1" />
             </button>
-            <Divider />
 
             {/* Est Total */}
             <button
@@ -407,7 +415,7 @@ export default function CheckoutDrawer() {
             <button
               onClick={() => {}}
               disabled={!isCheckoutReady}
-              className="btn-press w-full mt-1 mb-1 py-3.5 rounded-full text-[13px] tracking-[0.18em] uppercase font-medium transition-all duration-300"
+              className="btn-press w-full mt-1 mb-1 py-3.5 rounded-full text-[13px] font-bold transition-all duration-300"
               style={{
                 background: CHECKOUT_THEME.primaryColor,
                 color: "var(--color-ivory)",
@@ -422,8 +430,18 @@ export default function CheckoutDrawer() {
 
         {/* ─── Bottom Sheet Overlay ─── */}
         {activeSheet && (
-          <SheetWrapper animatingOut={sheetAnimatingOut} onClose={closeSheet}>
-            {activeSheet === "shipping" && (
+          <SheetWrapper
+            height={
+              isShippingSheetActive
+                ? "50%"
+                : isEstimateSheetActive
+                  ? "50%"
+                  : undefined
+            }
+            animatingOut={sheetAnimatingOut}
+            onClose={closeSheet}
+          >
+            {isShippingSheetActive && (
               <ShippingSheet
                 selectedShipping={selectedShipping}
                 onSelect={handleSelectShipping}
@@ -431,7 +449,7 @@ export default function CheckoutDrawer() {
               />
             )}
 
-            {activeSheet === "estimate" && (
+            {isEstimateSheetActive && (
               <EstimateSheet
                 subtotal={subtotal}
                 shippingCost={shippingCost}
@@ -442,7 +460,7 @@ export default function CheckoutDrawer() {
               />
             )}
 
-            {activeSheet === "payment" && (
+            {isPaymentSheetActive && (
               <PaymentSheet
                 paymentDetails={paymentDetails}
                 onChange={setPaymentDetails}
@@ -460,7 +478,7 @@ export default function CheckoutDrawer() {
               />
             )}
 
-            {activeSheet === "delivery" && (
+            {isDeliverySheetActive && (
               <DeliverySheet
                 onConfirm={handleConfirmDelivery}
                 onClose={closeSheet}
@@ -539,9 +557,9 @@ function CartItemRow({
 
   return (
     <div
-      className="relative rounded-xl p-3 transition-all duration-300 cursor-pointer"
+      className="relative rounded-xl py-3 transition-all duration-300 cursor-pointer"
       style={{
-        background: "rgba(0,0,0,0.02)",
+        // background: "rgba(0,0,0,0.02)",
         animation: isRemoving
           ? "cartItemRemove 0.32s ease forwards"
           : `cartItemEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.06}s both`,
@@ -551,23 +569,23 @@ function CartItemRow({
       <div className="flex gap-3">
         {/* Thumbnail */}
         <div
-          className="relative shrink-0 w-[65px] h-[65px] rounded-lg overflow-hidden"
+          className="relative shrink-0 w-[65px] h-[80px] rounded-lg overflow-hidden"
           style={{ background: "var(--color-sand)" }}
         >
           <Image
             src={color.image}
             alt={`${item.product.name} - ${color.name}`}
             width={65}
-            height={65}
+            height={80}
             className="h-full w-full object-cover aspect-square"
           />
         </div>
 
         {/* Details */}
         <div className="flex-1 min-w-0 flex flex-col py-0.5">
-          <div className="flex items-start justify-between mb-2">
+          <div className="flex items-start justify-between mb-3">
             <p
-              className="text-[15px] leading-snug truncate pr-8"
+              className="text-[15px] line-clamp-2 leading-snug pr-8"
               style={{
                 fontFamily: CHECKOUT_THEME.fontFamily,
                 color: "var(--color-graphite)",
@@ -585,7 +603,7 @@ function CartItemRow({
           </div>
 
           {/* Attribute pills row */}
-          <div className="flex flex-wrap items-center gap-2 mt-auto">
+          <div className="flex flex-wrap items-center gap-3">
             {/* Quantity stepper */}
             <QuantityStepper
               quantity={item.quantity}
@@ -593,24 +611,12 @@ function CartItemRow({
               onIncrement={onIncrement}
               size="sm"
             />
-
-            {/* Size pill */}
-            <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-colors hover:bg-black/5"
-              style={{
-                background: "rgba(0,0,0,0.03)",
-                color: "var(--color-charcoal)",
-              }}
-            >
-              {item.selectedSize}
-              <ChevronDownIcon />
-            </button>
-
             {/* Color pill */}
             <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-colors hover:bg-black/5"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-medium transition-colors hover:bg-black/5"
               style={{
-                background: "rgba(0,0,0,0.03)",
+                border: "1px solid var(--color-sand)",
+
                 color: "var(--color-charcoal)",
               }}
             >
@@ -621,6 +627,18 @@ function CartItemRow({
                   border: "1px solid rgba(0,0,0,0.08)",
                 }}
               />
+              <ChevronDownIcon />
+            </button>
+
+            {/* Size pill */}
+            <button
+              className="flex rounded-full items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium transition-colors hover:bg-black/5"
+              style={{
+                border: "1px solid var(--color-sand)",
+                color: "var(--color-charcoal)",
+              }}
+            >
+              {item.selectedSize}
               <ChevronDownIcon />
             </button>
           </div>
@@ -661,17 +679,16 @@ function FooterRow({
         </p>
         <div className="flex flex-row gap-0.5 mt-0.5">
           <p
-            className="text-[12px]"
+            className="text-[12px] font-semibold"
             style={{
               color: hasValue ? "var(--color-graphite)" : "var(--color-muted)",
-              fontWeight: hasValue ? 500 : 400,
             }}
           >
             {subtitle}
           </p>
           {extraText && (
             <p
-              className="text-[11.5px]"
+              className="text-[11.5px] font-semibold"
               style={{ color: "var(--color-graphite)" }}
             >
               • {extraText}

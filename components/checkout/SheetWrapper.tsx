@@ -22,17 +22,19 @@ interface SheetWrapperProps {
   animatingOut: boolean;
   /** Called when the user taps the backdrop */
   onClose: () => void;
+  height?: string;
   children: React.ReactNode;
 }
 
 export default function SheetWrapper({
   animatingOut,
   onClose,
+  height = "85%",
   children,
 }: SheetWrapperProps) {
   return (
     <div
-      className="absolute inset-0 z-[1000] flex flex-col justify-end overflow-hidden"
+      className="checkout-sheet-wrapper absolute inset-0 z-[1000] flex flex-col justify-end overflow-hidden"
       style={{ borderRadius: "16px" }}
     >
       {/* Backdrop */}
@@ -41,8 +43,8 @@ export default function SheetWrapper({
         style={{
           background: "rgba(0,0,0,0.3)",
           animation: animatingOut
-            ? "backdropFadeOut 0.4s ease forwards"
-            : "backdropFadeIn 0.4s ease forwards",
+            ? "backdropFadeOut var(--sheet-backdrop-duration, 0.4s) ease forwards"
+            : "backdropFadeIn var(--sheet-backdrop-duration, 0.4s) ease forwards",
         }}
         onClick={onClose}
       />
@@ -51,13 +53,13 @@ export default function SheetWrapper({
       <div
         className="relative w-full bg-white flex flex-col"
         style={{
-          height: "85%",
+          height,
           borderTopLeftRadius: "24px",
           borderTopRightRadius: "24px",
           boxShadow: "0 -4px 20px rgba(0,0,0,0.08)",
           animation: animatingOut
-            ? "sheetSlideDown 0.35s cubic-bezier(0.4, 0, 0.7, 0.2) forwards"
-            : "sheetSlideUp 0.45s cubic-bezier(0.32, 0.72, 0, 1) forwards",
+            ? "sheetSlideDown var(--sheet-exit-duration, 0.35s) cubic-bezier(0.4, 0, 0.7, 0.2) forwards"
+            : "sheetSlideUp var(--sheet-enter-duration, 0.45s) cubic-bezier(0.32, 0.72, 0, 1) forwards",
         }}
       >
         {/* Grab handle */}
