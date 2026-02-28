@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 import { ViewTransitions } from "next-view-transitions";
+import localFont from "next/font/local";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const bogleBlack = localFont({
+  src: "../public/BOGLEBLACK.otf",
+  variable: "--font-bogle",
   display: "swap",
 });
 
@@ -29,8 +36,11 @@ export default function RootLayout({
 }>) {
   return (
     <ViewTransitions>
-      <html lang="en">
-        <body className={`${inter.variable} ${cormorant.variable} antialiased`}>
+      <html
+        lang="en"
+        className={`${inter.variable} ${bogleBlack.variable} ${cormorant.variable}`}
+      >
+        <body className="antialiased">
           {children}
         </body>
       </html>
