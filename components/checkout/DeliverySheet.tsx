@@ -5,7 +5,7 @@
  *
  * Two-tab delivery options:
  *   • Pickup — station list → schedule (date + time slots)
- *   • Doorstep — name / address / zip form
+ *   • Doorstep — name / address / city-state-country / zip form
  *
  * The footer CTA confirms the selection and returns a summary.
  * ============================================================
@@ -20,6 +20,26 @@ import SheetHeader from "./SheetHeader";
 import type { DeliverySummary, DeliveryTab } from "./types";
 import { generateDates } from "./utils";
 
+const CITY_OPTIONS = [
+  "New York",
+  "Brooklyn",
+  "Queens",
+  "Jersey City",
+  "Hoboken",
+];
+const STATE_OPTIONS = ["New York", "New Jersey", "Connecticut", "Pennsylvania"];
+const COUNTRY_OPTIONS = ["United States", "Canada", "Mexico"];
+
+interface DoorDetails {
+  fullname: string;
+  address: string;
+  address2: string;
+  city: string;
+  state: string;
+  country: string;
+  zip: string;
+}
+
 interface DeliverySheetProps {
   onConfirm: (summary: DeliverySummary) => void;
   onClose: () => void;
@@ -31,9 +51,13 @@ export default function DeliverySheet({
 }: DeliverySheetProps) {
   /* ── local state (scoped to this sheet's lifetime) ── */
   const [deliveryTab, setDeliveryTab] = useState<DeliveryTab>("door");
-  const [doorDetails, setDoorDetails] = useState({
+  const [doorDetails, setDoorDetails] = useState<DoorDetails>({
     fullname: "",
     address: "",
+    address2: "",
+    city: "",
+    state: "",
+    country: "",
     zip: "",
   });
   const [selectedStation, setSelectedStation] = useState<string | null>(null);
@@ -42,8 +66,16 @@ export default function DeliverySheet({
   const [pickupView, setPickupView] = useState<"list" | "schedule">("list");
   const [availableDates] = useState(() => generateDates(7));
 
+  const updateDoorDetails = (field: keyof DoorDetails, value: string) => {
+    setDoorDetails((prev) => ({ ...prev, [field]: value }));
+  };
+
   /* ── derived validation ── */
-  const isDoorValid = !!doorDetails.address;
+  const isDoorValid =
+    !!doorDetails.address &&
+    !!doorDetails.city &&
+    !!doorDetails.state &&
+    !!doorDetails.country;
   const isPickupValid = !!selectedStation && !!selectedDate && !!selectedTime;
   const isConfirmDisabled =
     (deliveryTab === "door" && !isDoorValid) ||
@@ -51,7 +83,14 @@ export default function DeliverySheet({
 
   const handleConfirm = () => {
     if (deliveryTab === "door") {
-      if (!doorDetails.address) return;
+      if (
+        !doorDetails.address ||
+        !doorDetails.city ||
+        !doorDetails.state ||
+        !doorDetails.country
+      ) {
+        return;
+      }
       onConfirm({ title: "Door Delivery", subtitle: doorDetails.address });
     } else {
       if (!selectedStation) return;
@@ -84,7 +123,7 @@ export default function DeliverySheet({
               <img
                 src="/icons/wmt_pickup.svg"
                 alt="Pickup"
-                className="w-5 h-5"
+                className="w-8 h-8"
               />
             }
             isActive={deliveryTab === "pickup"}
@@ -96,7 +135,7 @@ export default function DeliverySheet({
               <img
                 src="/icons/wmt_doorstep.svg"
                 alt="Doorstep"
-                className="w-8 h-8"
+                className="w-10 h-10"
               />
             }
             isActive={deliveryTab === "door"}
@@ -114,20 +153,49 @@ export default function DeliverySheet({
               label="Full Name"
               placeholder="John Doe"
               value={doorDetails.fullname}
-              onChange={(v) => setDoorDetails({ ...doorDetails, fullname: v })}
+              onChange={(v) => updateDoorDetails("fullname", v)}
+            />
+            <SelectField
+              label="Country or region"
+              placeholder="Select country"
+              value={doorDetails.country}
+              options={COUNTRY_OPTIONS}
+              onChange={(v) => updateDoorDetails("country", v)}
             />
             <FormField
-              label="Address"
+              label="Address Line 1"
               placeholder="123 Maison Blvd"
               value={doorDetails.address}
-              onChange={(v) => setDoorDetails({ ...doorDetails, address: v })}
+              onChange={(v) => updateDoorDetails("address", v)}
             />
             <FormField
-              label="Zip Code"
-              placeholder="10012"
-              value={doorDetails.zip}
-              onChange={(v) => setDoorDetails({ ...doorDetails, zip: v })}
+              label="Address Line 2"
+              placeholder="Apartment, suite, etc (optional)"
+              value={doorDetails.address2}
+              onChange={(v) => updateDoorDetails("address2", v)}
             />
+            <SelectField
+              label="City"
+              placeholder="Select city"
+              value={doorDetails.city}
+              options={CITY_OPTIONS}
+              onChange={(v) => updateDoorDetails("city", v)}
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <SelectField
+                label="State"
+                placeholder="Select state"
+                value={doorDetails.state}
+                options={STATE_OPTIONS}
+                onChange={(v) => updateDoorDetails("state", v)}
+              />
+              <FormField
+                label="Zip Code"
+                placeholder="10012"
+                value={doorDetails.zip}
+                onChange={(v) => updateDoorDetails("zip", v)}
+              />
+            </div>
           </div>
         ) : (
           /* ── Pickup Flow ── */
@@ -336,7 +404,7 @@ export default function DeliverySheet({
       {(deliveryTab === "door" ||
         (deliveryTab === "pickup" && pickupView === "schedule")) && (
         <SheetFooterButton
-          label="Confirm Delivery"
+          label="Confirm delivery"
           onClick={handleConfirm}
           disabled={isConfirmDisabled}
         />
@@ -362,7 +430,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className="flex-1 flex items-center justify-center gap-1 py-1 font-semibold rounded-lg text-[13px] transition-all"
+      className="flex-1 flex items-center justify-center gap-1 py-0.5 font-semibold rounded-lg text-[15px] transition-all"
       style={{
         background: isActive ? "#fff" : "transparent",
         color: isActive ? CHECKOUT_THEME.primaryColor : "var(--color-muted)",
@@ -397,6 +465,49 @@ function FormField({
         onChange={(e) => onChange(e.target.value)}
         className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors"
       />
+    </div>
+  );
+}
+
+/** Reusable form field (label + select dropdown) */
+function SelectField({
+  label,
+  placeholder,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  placeholder: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-[12px] font-medium text-gray-600">{label}</label>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full appearance-none bg-white px-4 py-3 pr-9 rounded-xl border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors"
+        >
+          <option value="" disabled>
+            {placeholder}
+          </option>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        <span
+          className="pointer-events-none rotate-90 absolute right-3 top-1/2 -translate-y-1/2 text-[24px]"
+          style={{ color: "var(--color-muted)" }}
+        >
+          &#8250;
+        </span>
+      </div>
     </div>
   );
 }

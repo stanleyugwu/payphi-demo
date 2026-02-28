@@ -29,14 +29,14 @@ export default function ShippingSheet({
   onClose,
 }: ShippingSheetProps) {
   return (
-    <div className="flex-1 flex flex-col px-6 pb-6 overflow-y-auto cart-drawer-scroll">
+    <div className="flex-1 flex flex-col pb-6 overflow-y-auto cart-drawer-scroll">
       <SheetHeader
         title="Shipping Options"
         subtitle="Select your preferred shipping plan"
         onClose={onClose}
       />
 
-      <div className="flex flex-col gap-3">
+      <div className="flex px-6 flex-col gap-3">
         {(Object.keys(SHIPPING_OPTIONS) as ShippingOption[]).map((key) => {
           const opt = SHIPPING_OPTIONS[key];
           const isSelected = selectedShipping === key;

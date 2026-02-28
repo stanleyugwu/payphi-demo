@@ -222,6 +222,22 @@ body {
   border-radius: 100px;
 }
 
+/* Sheet animation timing defaults */
+.checkout-sheet-wrapper {
+  --sheet-enter-duration: 0.45s;
+  --sheet-exit-duration: 0.35s;
+  --sheet-backdrop-duration: 0.4s;
+}
+
+/* Slower, more visible sheet motion on small screens */
+@media (max-width: 768px) {
+  .checkout-sheet-wrapper {
+    --sheet-enter-duration: 0.62s;
+    --sheet-exit-duration: 0.52s;
+    --sheet-backdrop-duration: 0.5s;
+  }
+}
+
 /* ─── Checkout Drawer ─── */
 @keyframes checkoutSlideIn {
   from {

@@ -20,7 +20,7 @@
 
 export const CHECKOUT_THEME = {
   /** Primary brand color (Walmart Blue) */
-  primaryColor: "#0053e2",
+  primaryColor: "#0054E2",
 
   /** Font stack — falls back gracefully across OSes */
   fontFamily:
