@@ -25,6 +25,7 @@ interface QuantityStepperProps {
   onIncrement: () => void;
   /** Visual size variant */
   size?: "sm" | "md";
+  className?: string;
 }
 
 export default function QuantityStepper({
@@ -32,6 +33,7 @@ export default function QuantityStepper({
   onDecrement,
   onIncrement,
   size = "sm",
+  className,
 }: QuantityStepperProps) {
   const isSmall = size === "sm";
   const btnSize = isSmall ? "w-7 h-7" : "w-8 h-8";
@@ -41,7 +43,7 @@ export default function QuantityStepper({
 
   return (
     <div
-      className="flex items-center rounded-full overflow-hidden"
+      className={`flex items-center rounded-full overflow-hidden ${className}`}
       style={{ border: "1px solid var(--color-sand)" }}
     >
       {/* Decrement / Delete */}

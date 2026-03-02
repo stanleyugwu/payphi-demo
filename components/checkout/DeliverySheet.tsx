@@ -91,11 +91,16 @@ export default function DeliverySheet({
       ) {
         return;
       }
-      onConfirm({ title: "Door Delivery", subtitle: doorDetails.address });
+      onConfirm({
+        type: "door",
+        title: "Door Delivery",
+        subtitle: doorDetails.address,
+      });
     } else {
       if (!selectedStation) return;
       const st = PICKUP_STATIONS.find((s) => s.id === selectedStation);
       onConfirm({
+        type: "pickup",
         title: "Pickup Station",
         subtitle: st ? st.name : "Selected Station",
       });

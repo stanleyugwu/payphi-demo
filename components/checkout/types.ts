@@ -24,6 +24,7 @@ export type DeliveryTab = "door" | "pickup";
 
 /** Persisted summary shown on the main drawer after the user confirms delivery */
 export interface DeliverySummary {
+  type: DeliveryTab;
   title: string;
   subtitle: string;
 }
