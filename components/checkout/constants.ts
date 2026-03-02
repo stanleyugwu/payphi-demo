@@ -43,7 +43,7 @@ export const SHIPPING_OPTIONS: Record<ShippingOption, ShippingTier> = {
   standard: {
     title: "Standard",
     days: 5,
-    price: "0$",
+    price: "$0.00",
     text: "3-4 hours",
   },
   express: {

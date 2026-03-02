@@ -33,6 +33,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCart } from "../CartContext";
+import CheckoutAnimation from "./CheckoutAnimation";
 
 /* ── checkout module imports ── */
 import {
@@ -49,6 +50,7 @@ import {
   ChevronDownIcon,
   ChevronIcon,
   CloseIcon,
+  DeliveryMethodIcon,
   ShoppingBagIcon,
   WalmartLogo,
 } from "./Icons";
@@ -86,6 +88,14 @@ export default function CheckoutDrawer() {
   const [animatingOut, setAnimatingOut] = useState(false);
   const [removingKeys, setRemovingKeys] = useState<Set<string>>(new Set());
   const drawerRef = useRef<HTMLDivElement>(null);
+
+  /* ── checkout animation state ── */
+  const [checkoutAnimating, setCheckoutAnimating] = useState(false);
+
+  const handleCheckoutComplete = useCallback(() => {
+    setCheckoutAnimating(false);
+    closeCheckout();
+  }, [closeCheckout]);
 
   /* ── sheet state ── */
   const [activeSheet, setActiveSheet] = useState<SheetType>(null);
@@ -142,6 +152,11 @@ export default function CheckoutDrawer() {
   const progressPercent = (completedSteps / totalSteps) * 100;
   const isCheckoutReady =
     !!selectedShipping && !!selectedDeliverySummary && !!selectedPaymentSummary;
+
+  const handleCheckout = useCallback(() => {
+    if (!isCheckoutReady) return;
+    setCheckoutAnimating(true);
+  }, [isCheckoutReady]);
 
   const shippingCost = selectedShipping
     ? SHIPPING_COST_BY_OPTION[selectedShipping]
@@ -282,7 +297,7 @@ export default function CheckoutDrawer() {
             </div>
             <button
               onClick={closeCheckout}
-              className="absolute right-0 flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:scale-110 active:scale-90"
+              className="absolute right-4 flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:scale-110 active:scale-90"
               style={{ background: "rgba(0,0,0,0.05)" }}
               aria-label="Close bag"
             >
@@ -331,17 +346,54 @@ export default function CheckoutDrawer() {
             />
 
             {/* Delivery */}
-            <FooterRow
-              title="Delivery"
-              subtitle={
-                selectedDeliverySummary
-                  ? selectedDeliverySummary.title
-                  : "Click to add delivery details"
-              }
-              extraText={selectedDeliverySummary?.subtitle}
-              hasValue={!!selectedDeliverySummary}
+            <button
               onClick={() => setActiveSheet("delivery")}
-            />
+              className="flex items-center justify-between py-2.5 group text-left transition-colors hover:bg-black/5 rounded-lg -mx-2 px-2"
+            >
+              <div>
+                <p
+                  className="text-[15px] font-semibold"
+                  style={{
+                    fontFamily: CHECKOUT_THEME.fontFamily,
+                    color: "var(--color-graphite)",
+                  }}
+                >
+                  Delivery
+                </p>
+                {selectedDeliverySummary ? (
+                  <div className="flex items-center gap-2 mt-1">
+                    <DeliveryMethodIcon type={selectedDeliverySummary.type} />
+                    <div className="flex flex-col">
+                      <p
+                        className="text-[12px]"
+                        style={{
+                          color: "var(--color-graphite)",
+                          fontWeight: 500,
+                        }}
+                      >
+                        {selectedDeliverySummary.title}
+                      </p>
+                      {selectedDeliverySummary.subtitle && (
+                        <p
+                          className="text-[11px]"
+                          style={{ color: "var(--color-muted)" }}
+                        >
+                          {selectedDeliverySummary.subtitle}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <p
+                    className="text-[12px] mt-0.5"
+                    style={{ color: "var(--color-muted)" }}
+                  >
+                    Click to add delivery details
+                  </p>
+                )}
+              </div>
+              <ChevronIcon className="transition-transform group-hover:translate-x-1" />
+            </button>
 
             {/* Payment */}
             <button
@@ -413,7 +465,7 @@ export default function CheckoutDrawer() {
 
             {/* Checkout CTA */}
             <button
-              onClick={() => {}}
+              onClick={handleCheckout}
               disabled={!isCheckoutReady}
               className="btn-press w-full mt-1 mb-1 py-3.5 rounded-full text-[13px] font-bold transition-all duration-300"
               style={{
@@ -485,6 +537,11 @@ export default function CheckoutDrawer() {
               />
             )}
           </SheetWrapper>
+        )}
+
+        {/* ─── Checkout Animation Overlay ─── */}
+        {checkoutAnimating && (
+          <CheckoutAnimation onComplete={handleCheckoutComplete} />
         )}
       </div>
     </>
@@ -603,17 +660,18 @@ function CartItemRow({
           </div>
 
           {/* Attribute pills row */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap justify-between items-center gap-3">
             {/* Quantity stepper */}
             <QuantityStepper
               quantity={item.quantity}
               onDecrement={onDecrement}
               onIncrement={onIncrement}
               size="sm"
+              className="flex-1 justify-between"
             />
             {/* Color pill */}
             <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-medium transition-colors hover:bg-black/5"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-medium transition-colors hover:bg-black/5"
               style={{
                 border: "1px solid var(--color-sand)",
 
@@ -632,7 +690,7 @@ function CartItemRow({
 
             {/* Size pill */}
             <button
-              className="flex rounded-full items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium transition-colors hover:bg-black/5"
+              className="flex rounded-full items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-medium transition-colors hover:bg-black/5"
               style={{
                 border: "1px solid var(--color-sand)",
                 color: "var(--color-charcoal)",
