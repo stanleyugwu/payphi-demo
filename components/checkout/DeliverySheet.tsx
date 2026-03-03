@@ -7,27 +7,74 @@
  *   • Pickup — station list → schedule (date + time slots)
  *   • Doorstep — name / address / city-state-country / zip form
  *
+ * All form state is owned by the parent (CheckoutDrawer) so that
+ * entered details persist when the user closes and reopens the sheet.
+ *
  * The footer CTA confirms the selection and returns a summary.
  * ============================================================
  */
 
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { CHECKOUT_THEME, PICKUP_STATIONS, TIMEFRAMES } from "./constants";
 import SheetFooterButton from "./SheetFooterButton";
 import SheetHeader from "./SheetHeader";
 import type { DeliverySummary, DeliveryTab } from "./types";
-import { generateDates } from "./utils";
+import type { DateOption } from "./utils";
 
-const CITY_OPTIONS = [
+const STATE_OPTIONS = [
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
   "New York",
-  "Brooklyn",
-  "Queens",
-  "Jersey City",
-  "Hoboken",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
 ];
-const STATE_OPTIONS = ["New York", "New Jersey", "Connecticut", "Pennsylvania"];
 const COUNTRY_OPTIONS = ["United States", "Canada", "Mexico"];
 
 interface DoorDetails {
@@ -43,29 +90,39 @@ interface DoorDetails {
 interface DeliverySheetProps {
   onConfirm: (summary: DeliverySummary) => void;
   onClose: () => void;
+  /* ── lifted state from parent ── */
+  deliveryTab: DeliveryTab;
+  setDeliveryTab: (tab: DeliveryTab) => void;
+  doorDetails: DoorDetails;
+  setDoorDetails: React.Dispatch<React.SetStateAction<DoorDetails>>;
+  selectedStation: string | null;
+  setSelectedStation: (station: string | null) => void;
+  selectedDate: string | null;
+  setSelectedDate: (date: string | null) => void;
+  selectedTime: string | null;
+  setSelectedTime: (time: string | null) => void;
+  pickupView: "list" | "schedule";
+  setPickupView: (view: "list" | "schedule") => void;
+  availableDates: DateOption[];
 }
 
 export default function DeliverySheet({
   onConfirm,
   onClose,
+  deliveryTab,
+  setDeliveryTab,
+  doorDetails,
+  setDoorDetails,
+  selectedStation,
+  setSelectedStation,
+  selectedDate,
+  setSelectedDate,
+  selectedTime,
+  setSelectedTime,
+  pickupView,
+  setPickupView,
+  availableDates,
 }: DeliverySheetProps) {
-  /* ── local state (scoped to this sheet's lifetime) ── */
-  const [deliveryTab, setDeliveryTab] = useState<DeliveryTab>("door");
-  const [doorDetails, setDoorDetails] = useState<DoorDetails>({
-    fullname: "",
-    address: "",
-    address2: "",
-    city: "",
-    state: "",
-    country: "",
-    zip: "",
-  });
-  const [selectedStation, setSelectedStation] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [pickupView, setPickupView] = useState<"list" | "schedule">("list");
-  const [availableDates] = useState(() => generateDates(7));
-
   const updateDoorDetails = (field: keyof DoorDetails, value: string) => {
     setDoorDetails((prev) => ({ ...prev, [field]: value }));
   };
@@ -179,11 +236,11 @@ export default function DeliverySheet({
               value={doorDetails.address2}
               onChange={(v) => updateDoorDetails("address2", v)}
             />
-            <SelectField
+            {/* City is now a text input instead of dropdown */}
+            <FormField
               label="City"
-              placeholder="Select city"
+              placeholder="Enter city"
               value={doorDetails.city}
-              options={CITY_OPTIONS}
               onChange={(v) => updateDoorDetails("city", v)}
             />
             <div className="grid grid-cols-2 gap-3">

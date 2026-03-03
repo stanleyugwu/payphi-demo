@@ -23,7 +23,7 @@ import { CHECKOUT_THEME } from "./constants";
 import { WalmartLogo } from "./Icons";
 
 /** ms — how long the slide/morph takes */
-const SLIDE_MS = 900;
+const SLIDE_MS = 1400;
 
 /** ms — how long the spinner spins before becoming a checkmark */
 const SPIN_MS = 4000;
@@ -104,7 +104,7 @@ export default function CheckoutAnimation({
           style={{
             transform: sliding
               ? "translateY(0) scale(1.4)"
-              : "translateY(-180px) scale(1.4)",
+              : "translateY(-40vh) scale(1.4)",
             transition: `transform ${SLIDE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
           }}
         >
@@ -166,7 +166,7 @@ export default function CheckoutAnimation({
               transition:
                 "opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
               borderRadius: "50%",
-              background: "rgba(255,255,255,0.18)",
+              background: "transparent",
               border: `${STROKE_WIDTH}px solid #ffffff`,
               display: "flex",
               alignItems: "center",

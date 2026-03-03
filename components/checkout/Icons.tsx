@@ -327,19 +327,13 @@ import type { DeliveryTab } from "./types";
 /** Delivery method badge — Door / Pickup (uses same icons as the delivery sheet tabs) */
 export function DeliveryMethodIcon({ type }: { type: DeliveryTab }) {
   return (
-    <div
-      className="w-8 h-7 rounded-md flex items-center justify-center"
-      style={{
-        background: "rgba(0,83,226,0.08)",
-        border: "1px solid rgba(0,83,226,0.2)",
-      }}
-    >
+    <div className="w-6 h-6 flex items-center justify-center">
       <img
         src={
           type === "door" ? "/icons/wmt_doorstep.svg" : "/icons/wmt_pickup.svg"
         }
         alt={type === "door" ? "Doorstep" : "Pickup"}
-        className="w-5 h-5"
+        className="w-6 h-6"
       />
     </div>
   );
