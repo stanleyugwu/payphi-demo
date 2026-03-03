@@ -59,9 +59,14 @@ import ProductDetailSheet from "./ProductDetailSheet";
 import QuantityStepper from "./QuantityStepper";
 import SheetWrapper from "./SheetWrapper";
 import ShippingSheet from "./ShippingSheet";
-import type { DeliverySummary, PaymentSummary, SheetType } from "./types";
+import type {
+  DeliverySummary,
+  DeliveryTab,
+  PaymentSummary,
+  SheetType,
+} from "./types";
 import type { CardBrand } from "./utils";
-import { formatCurrency, getArrivalDate } from "./utils";
+import { formatCurrency, generateDates, getArrivalDate } from "./utils";
 
 const SHEET_CLOSE_DELAY_DESKTOP_MS = 350;
 const SHEET_CLOSE_DELAY_MOBILE_MS = 400;
@@ -122,13 +127,30 @@ export default function CheckoutDrawer() {
   const [selectedPaymentSummary, setSelectedPaymentSummary] =
     useState<PaymentSummary | null>(null);
 
-  /* ── payment form state ── */
+  /* ── payment form state (persisted across sheet open/close) ── */
   const [paymentDetails, setPaymentDetails] = useState({
     cardNumber: "",
     cardholderName: "",
     expiry: "",
     cvv: "",
   });
+
+  /* ── delivery form state (persisted across sheet open/close) ── */
+  const [deliveryTab, setDeliveryTab] = useState<DeliveryTab>("door");
+  const [doorDetails, setDoorDetails] = useState({
+    fullname: "",
+    address: "",
+    address2: "",
+    city: "",
+    state: "",
+    country: "",
+    zip: "",
+  });
+  const [selectedStation, setSelectedStation] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [pickupView, setPickupView] = useState<"list" | "schedule">("list");
+  const [availableDates] = useState(() => generateDates(7));
 
   /* ── product detail sheet state ── */
   const [selectedCartItemKey, setSelectedCartItemKey] = useState<string | null>(
@@ -272,25 +294,26 @@ export default function CheckoutDrawer() {
             "transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), filter 0.45s ease",
         }}
       >
-        {/* ─── Header ─── */}
+        {/* ─── Progress bar (flush top edge) ─── */}
         <div
-          className="flex flex-col py-4"
-          style={{ borderBottom: "1px solid var(--color-sand)" }}
+          className="w-full flex items-center h-1.5 overflow-hidden shrink-0"
+          style={{
+            background: "var(--color-cream)",
+            borderTopLeftRadius: "16px",
+            borderTopRightRadius: "16px",
+          }}
         >
-          {/* Progress bar */}
           <div
-            className="w-full flex items-center h-1.5 overflow-hidden mb-4"
-            style={{ background: "var(--color-cream)" }}
-          >
-            <div
-              className="h-full transition-all duration-500 ease-out"
-              style={{
-                width: `${progressPercent}%`,
-                background: CHECKOUT_THEME.primaryColor,
-              }}
-            />
-          </div>
+            className="h-full transition-all duration-500 ease-out"
+            style={{
+              width: `${progressPercent}%`,
+              background: CHECKOUT_THEME.primaryColor,
+            }}
+          />
+        </div>
 
+        {/* ─── Header ─── */}
+        <div className="flex flex-col py-4">
           <div className="relative px-6 flex items-center justify-center">
             <div className="flex items-center gap-2">
               <WalmartLogo />
@@ -534,6 +557,19 @@ export default function CheckoutDrawer() {
               <DeliverySheet
                 onConfirm={handleConfirmDelivery}
                 onClose={closeSheet}
+                deliveryTab={deliveryTab}
+                setDeliveryTab={setDeliveryTab}
+                doorDetails={doorDetails}
+                setDoorDetails={setDoorDetails}
+                selectedStation={selectedStation}
+                setSelectedStation={setSelectedStation}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                selectedTime={selectedTime}
+                setSelectedTime={setSelectedTime}
+                pickupView={pickupView}
+                setPickupView={setPickupView}
+                availableDates={availableDates}
               />
             )}
           </SheetWrapper>
