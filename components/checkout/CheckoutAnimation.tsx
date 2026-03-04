@@ -18,7 +18,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CHECKOUT_THEME } from "./constants";
 import { WalmartLogo } from "./Icons";
 
@@ -32,8 +32,12 @@ const SPIN_MS = 4000;
 const POST_DONE_DELAY = 2000;
 
 /** Spinner / checkmark shared dimensions */
-const INDICATOR_SIZE = 48;
+const INDICATOR_SIZE = 44;
 const STROKE_WIDTH = 2;
+const CIRCUMFERENCE = Math.PI * (INDICATOR_SIZE - STROKE_WIDTH);
+
+/** Spin cycle duration — must match the CSS coSpin animation duration */
+const SPIN_CYCLE_MS = 1600;
 
 /**
  * Total timeline (ms):
@@ -53,6 +57,53 @@ export default function CheckoutAnimation({
   /* Only two React states: idle → sliding → done */
   const [sliding, setSliding] = useState(false);
   const [done, setDone] = useState(false);
+  const arcRef = useRef<SVGCircleElement>(null);
+
+  /* ── Animate arc stretch / contract via rAF ── */
+  useEffect(() => {
+    const minFrac = 0.08;
+    const maxFrac = 0.38;
+    let frame: number;
+    let start: number | null = null;
+
+    const animate = (timestamp: number) => {
+      if (!start) start = timestamp;
+      const elapsed = timestamp - start;
+
+      /* Wait for the slide to finish before animating the arc */
+      if (elapsed < SLIDE_MS) {
+        frame = requestAnimationFrame(animate);
+        return;
+      }
+
+      const cycleTime = (elapsed - SLIDE_MS) % SPIN_CYCLE_MS;
+      const progress = cycleTime / SPIN_CYCLE_MS;
+
+      /* Sine wave that peaks at progress ≈ 0.4 (fast phase) */
+      const fraction =
+        minFrac +
+        (maxFrac - minFrac) *
+          (0.5 + 0.5 * Math.sin(2 * Math.PI * progress - 0.3 * Math.PI));
+
+      const maxDash = CIRCUMFERENCE * maxFrac;
+      const dash = CIRCUMFERENCE * fraction;
+      const gap = CIRCUMFERENCE * (1 - fraction);
+
+      /* Pin the leading edge: offset = dash - maxDash keeps the front
+         at a fixed position while the trailing end stretches/contracts */
+      const offset = dash - maxDash;
+
+      if (arcRef.current) {
+        arcRef.current.setAttribute("stroke-dasharray", `${dash} ${gap}`);
+        arcRef.current.setAttribute("stroke-dashoffset", `${offset}`);
+      }
+
+      frame = requestAnimationFrame(animate);
+    };
+
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
     /* Kick off slide on next paint so initial CSS state is committed */
@@ -103,7 +154,7 @@ export default function CheckoutAnimation({
         <div
           style={{
             transform: sliding
-              ? "translateY(0) scale(1.4)"
+              ? "translateY(0) scale(1.1)"
               : "translateY(-40vh) scale(1.4)",
             transition: `transform ${SLIDE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
           }}
@@ -131,7 +182,7 @@ export default function CheckoutAnimation({
             style={{
               position: "absolute",
               inset: 0,
-              animation: `coSpin 1s linear ${spinnerDelay} infinite`,
+              animation: `coSpin 1.6s ease-in-out ${spinnerDelay} infinite`,
               opacity: done ? 0 : 1,
               transition: "opacity 0.35s ease",
             }}
@@ -145,6 +196,7 @@ export default function CheckoutAnimation({
               strokeWidth={STROKE_WIDTH}
             />
             <circle
+              ref={arcRef}
               cx={INDICATOR_SIZE / 2}
               cy={INDICATOR_SIZE / 2}
               r={(INDICATOR_SIZE - STROKE_WIDTH) / 2}
@@ -152,7 +204,7 @@ export default function CheckoutAnimation({
               stroke="#ffffff"
               strokeWidth={STROKE_WIDTH}
               strokeLinecap="round"
-              strokeDasharray={`${Math.PI * (INDICATOR_SIZE - STROKE_WIDTH) * 0.3} ${Math.PI * (INDICATOR_SIZE - STROKE_WIDTH) * 0.7}`}
+              strokeDasharray={`${CIRCUMFERENCE * 0.08} ${CIRCUMFERENCE * 0.92}`}
             />
           </svg>
 
