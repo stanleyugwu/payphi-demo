@@ -296,7 +296,7 @@ export default function CheckoutDrawer() {
       >
         {/* ─── Progress bar (flush top edge) ─── */}
         <div
-          className="w-full flex items-center h-1.5 overflow-hidden shrink-0"
+          className="w-[98%] self-center flex items-center h-2 overflow-hidden shrink-0"
           style={{
             background: "var(--color-cream)",
             borderTopLeftRadius: "16px",
@@ -308,6 +308,7 @@ export default function CheckoutDrawer() {
             style={{
               width: `${progressPercent}%`,
               background: CHECKOUT_THEME.primaryColor,
+              borderTopRightRadius: progressPercent >= 100 ? "16px" : "0px",
             }}
           />
         </div>

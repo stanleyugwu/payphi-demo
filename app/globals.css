@@ -371,11 +371,14 @@ body {
 
 /* ─── Checkout Animation ─── */
 @keyframes coSpin {
-  from {
+  0% {
     transform: rotate(0deg);
   }
-  to {
-    transform: rotate(360deg);
+  40% {
+    transform: rotate(-240deg);
+  }
+  100% {
+    transform: rotate(-360deg);
   }
 }
 
