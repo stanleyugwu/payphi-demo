@@ -17,9 +17,10 @@
 "use client";
 
 import React from "react";
-import { CHECKOUT_THEME, PICKUP_STATIONS, TIMEFRAMES } from "./constants";
+import { PICKUP_STATIONS, TIMEFRAMES } from "./constants";
 import SheetFooterButton from "./SheetFooterButton";
 import SheetHeader from "./SheetHeader";
+import { useCheckoutTheme } from "./ThemeContext";
 import type { DeliverySummary, DeliveryTab } from "./types";
 import type { DateOption } from "./utils";
 
@@ -164,6 +165,8 @@ export default function DeliverySheet({
     }
   };
 
+  const theme = useCheckoutTheme();
+
   return (
     <div className="flex-1 flex flex-col pt-2 bg-white rounded-t-[24px] overflow-hidden">
       {/* Header */}
@@ -176,17 +179,13 @@ export default function DeliverySheet({
       {/* Tab bar */}
       <div className="px-6 shrink-0 mb-4">
         <div
-          className="flex p-1 rounded-xl"
+          className={`flex p-1 ${theme.rounded ? "rounded-xl" : "rounded-xs"}`}
           style={{ background: "rgba(0,0,0,0.03)" }}
         >
           <TabButton
             label="Pickup"
             icon={
-              <img
-                src="/icons/wmt_pickup.svg"
-                alt="Pickup"
-                className="w-8 h-8"
-              />
+              <img src={theme.pickupIcon} alt="Pickup" className="w-8 h-8" />
             }
             isActive={deliveryTab === "pickup"}
             onClick={() => setDeliveryTab("pickup")}
@@ -195,7 +194,7 @@ export default function DeliverySheet({
             label="Doorstep"
             icon={
               <img
-                src="/icons/wmt_doorstep.svg"
+                src={theme.doorstepIcon}
                 alt="Doorstep"
                 className="w-10 h-10"
               />
@@ -280,7 +279,7 @@ export default function DeliverySheet({
                         <p
                           className="text-[14px] leading-snug"
                           style={{
-                            fontFamily: CHECKOUT_THEME.fontFamily,
+                            fontFamily: theme.fontFamily,
                             fontWeight: 600,
                             color: "var(--color-graphite)",
                           }}
@@ -341,7 +340,7 @@ export default function DeliverySheet({
                       setSelectedStation(null);
                     }}
                     className="text-[13px] font-medium shrink-0 ml-3"
-                    style={{ color: CHECKOUT_THEME.primaryColor }}
+                    style={{ color: theme.primaryColor }}
                   >
                     Edit
                   </button>
@@ -364,7 +363,7 @@ export default function DeliverySheet({
                           className="text-[10px] font-medium"
                           style={{
                             color: isSelected
-                              ? CHECKOUT_THEME.primaryColor
+                              ? theme.primaryColor
                               : "var(--color-taupe)",
                           }}
                         >
@@ -374,7 +373,7 @@ export default function DeliverySheet({
                           className="w-11 h-11 flex items-center justify-center rounded-full text-[11px] font-semibold transition-all"
                           style={{
                             background: isSelected
-                              ? CHECKOUT_THEME.primaryColor
+                              ? theme.primaryColor
                               : "rgba(0,0,0,0.05)",
                             color: isSelected
                               ? "#fff"
@@ -403,7 +402,7 @@ export default function DeliverySheet({
                             className="shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all"
                             style={{
                               borderColor: isSelected
-                                ? CHECKOUT_THEME.primaryColor
+                                ? theme.primaryColor
                                 : "var(--color-taupe)",
                             }}
                           >
@@ -411,7 +410,7 @@ export default function DeliverySheet({
                               <div
                                 className="w-2 h-2 rounded-full"
                                 style={{
-                                  background: CHECKOUT_THEME.primaryColor,
+                                  background: theme.primaryColor,
                                 }}
                               />
                             )}
@@ -489,13 +488,14 @@ function TabButton({
   isActive: boolean;
   onClick: () => void;
 }) {
+  const theme = useCheckoutTheme();
   return (
     <button
       onClick={onClick}
-      className="flex-1 flex items-center justify-center gap-1 py-0.5 font-semibold rounded-lg text-[15px] transition-all"
+      className={`flex-1 flex items-center justify-center gap-1 py-0.5 font-semibold text-[15px] transition-all ${theme.rounded ? "rounded-lg" : "rounded-xs"}`}
       style={{
         background: isActive ? "#fff" : "transparent",
-        color: isActive ? CHECKOUT_THEME.primaryColor : "var(--color-muted)",
+        color: isActive ? theme.primaryColor : "var(--color-muted)",
         boxShadow: isActive ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
       }}
     >
@@ -517,6 +517,7 @@ function FormField({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const theme = useCheckoutTheme();
   return (
     <div className="flex flex-col gap-1.5">
       <label className="text-[12px] font-medium text-gray-600">{label}</label>
@@ -525,7 +526,7 @@ function FormField({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors"
+        className={`w-full px-4 py-3 border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors ${theme.rounded ? "rounded-xl" : "rounded-none"}`}
       />
     </div>
   );
@@ -545,6 +546,7 @@ function SelectField({
   options: string[];
   onChange: (value: string) => void;
 }) {
+  const theme = useCheckoutTheme();
   return (
     <div className="flex flex-col gap-1.5">
       <label className="text-[12px] font-medium text-gray-600">{label}</label>
@@ -552,7 +554,7 @@ function SelectField({
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full appearance-none bg-white px-4 py-3 pr-9 rounded-xl border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors"
+          className={`w-full appearance-none bg-white px-4 py-3 pr-9 border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors ${theme.rounded ? "rounded-xl" : "rounded-none"}`}
         >
           <option value="" disabled>
             {placeholder}

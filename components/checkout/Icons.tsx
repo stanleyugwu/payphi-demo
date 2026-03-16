@@ -320,21 +320,202 @@ export function WalmartLogo({ color }: { color?: string } = {}) {
   );
 }
 
+/* ─── Target Logo ───────────────────────────────────────────── */
+
+export function TargetLogo({ color }: { color?: string } = {}) {
+  const bullseyeFill = color ?? "#CC0000";
+  const textFill = color ?? "#CC0000";
+
+  return (
+    <svg
+      width="140"
+      height="36"
+      viewBox="0 0 140 36"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ height: "28px", width: "auto", transition: "filter 0.8s ease" }}
+    >
+      {/* Bullseye */}
+      <circle
+        cx="18"
+        cy="18"
+        r="17"
+        fill={bullseyeFill}
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      <circle
+        cx="18"
+        cy="18"
+        r="11"
+        fill={color ? "transparent" : "white"}
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      <circle
+        cx="18"
+        cy="18"
+        r="6"
+        fill={bullseyeFill}
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      {/* Wordmark */}
+      <text
+        x="42"
+        y="24"
+        fontFamily="Helvetica, Arial, sans-serif"
+        fontWeight="700"
+        fontSize="22"
+        letterSpacing="1"
+        fill={textFill}
+        style={{ transition: "fill 0.8s ease" }}
+      >
+        TARGET
+      </text>
+    </svg>
+  );
+}
+
+/* ─── Wayfair Logo ──────────────────────────────────────────── */
+
+export function WayfairLogo({ color }: { color?: string } = {}) {
+  const fill = color ?? "#7B189F";
+
+  return (
+    <svg
+      viewBox="0 0 629.52 150"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      style={{ height: "28px", width: "auto", transition: "filter 0.8s ease" }}
+    >
+      <title>Wayfair</title>
+      {/* Registration marks */}
+      <path
+        fill={fill}
+        strokeWidth="0px"
+        d="M624.09,42.29c0-0.77-0.42-1.54-1.47-1.54h-1.89v4.96h0.7V43.9h0.63l1.26,1.81h0.84l-1.33-1.89 C623.74,43.76,624.09,42.99,624.09,42.29L624.09,42.29z M621.44,43.2v-1.81h1.26c0.56,0,0.77,0.49,0.77,0.91 c0,0.42-0.21,0.91-0.84,0.91L621.44,43.2L621.44,43.2z"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      <path
+        fill={fill}
+        strokeWidth="0px"
+        d="M622.27,38.94c-2.38,0-4.26,1.89-4.26,4.26c0,2.38,1.89,4.26,4.26,4.26s4.26-1.89,4.26-4.26 C626.54,40.82,624.58,38.94,622.27,38.94z M622.27,46.83c-2.03,0-3.63-1.61-3.63-3.63c-0.07-2.03,1.61-3.63,3.63-3.63 s3.63,1.61,3.63,3.63C625.91,45.23,624.3,46.83,622.27,46.83z"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      {/* Dot on the i */}
+      <ellipse
+        fill={fill}
+        strokeWidth="0px"
+        cx="541.78"
+        cy="15.8"
+        rx="11.49"
+        ry="11.2"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      {/* Wayfair icon (four-petal star) */}
+      <path
+        fill={fill}
+        strokeWidth="0px"
+        d="M53.15,111.51L19.41,77.76L7.77,89.4c-1.17,1.17-1.31,2.04-0.87,3.49l5.53,21.53 c0.58,2.33,1.74,3.49,4.07,4.07l21.53,5.53c1.45,0.44,2.33,0.29,3.49-0.87L53.15,111.51L53.15,111.51z M58.68,111.51l11.64,11.64 c1.17,1.17,2.04,1.31,3.49,0.87l21.53-5.53c2.33-0.58,3.49-1.74,4.07-4.07l5.53-21.53c0.44-1.45,0.29-2.33-0.87-3.49L92.43,77.76 L58.68,111.51L58.68,111.51z M58.68,38.49l33.75,33.75l11.64-11.64c1.17-1.17,1.31-2.04,0.87-3.49l-5.53-21.53 c-0.58-2.33-1.74-3.49-4.07-4.07l-21.53-5.53c-1.45-0.44-2.33-0.29-3.49,0.87L58.68,38.49L58.68,38.49z M53.15,38.49L41.52,26.85 c-1.17-1.17-2.04-1.31-3.49-0.87L16.5,31.51c-2.33,0.58-3.49,1.74-4.07,4.07L6.9,57.1c-0.44,1.45-0.29,2.33,0.87,3.49l11.64,11.64 L53.15,38.49L53.15,38.49z"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      {/* "ayfair" text + f ligature */}
+      <path
+        fill={fill}
+        strokeWidth="0px"
+        d="M437.35,53.47h-17.9v52.64c0,2.74-2.22,4.96-4.96,4.96h-13.95v-57.6h-16.28l-21.6,61.24 c-8.73,24.58-17.31,30.98-32.58,30.98c-2.91,0-7.56-0.58-12.22-1.45l4.12-13.53h6.65c7.34,0,11.21-2.28,13.75-8.68 c2.53-6.41,2.59-7.4,2.62-7.46L319.1,38.93h16.41c2.18,0,4.1,1.42,4.74,3.5l14.63,47.55L370.3,43c1.02-2.91,2.33-4.07,5.24-4.07 h25.01v-2.04c0-21.38,9.89-32.58,28.66-32.58c2.91,0,9.49,0.52,13.42,1.4l-4.15,13.58h-5.49c-7.47,0-13.53,6.06-13.53,13.53v6.11 h22.31L437.35,53.47L437.35,53.47z"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      {/* "W" */}
+      <path
+        fill={fill}
+        strokeWidth="0px"
+        d="M200.36,89.4l-14.54-47.27c-0.73-2.47-1.74-3.2-4.22-3.2h-13.82c-2.47,0-3.49,0.73-4.22,3.2L148.87,89.4 l-13.09-50.47h-20.8l20.95,68.95c0.73,2.47,1.74,3.2,4.22,3.2h14.4c2.47,0,3.49-0.73,4.22-3.2l15.27-48.58l15.42,48.58 c0.73,2.47,1.74,3.2,4.22,3.2h12.95c2.47,0,3.49-0.73,4.22-3.2l20.95-68.95H213.6L200.36,89.4L200.36,89.4z"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      {/* "i" stem */}
+      <rect
+        x="532.32"
+        y="38.93"
+        fill={fill}
+        strokeWidth="0px"
+        width="18.91"
+        height="72.15"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      {/* First "a" */}
+      <path
+        fill={fill}
+        strokeWidth="0px"
+        d="M291.9,43l-0.44,8.3c-4.51-10.77-13.67-13.82-24.44-13.82c-19.78,0-32.15,17.89-32.15,37.53 s12.36,37.53,32.15,37.53c10.77,0,19.93-3.06,24.44-13.82l0.44,8.3c0,2.76,1.31,4.07,3.64,4.07h15.13V38.93h-15.13 C293.21,38.93,291.9,40.23,291.9,43L291.9,43z M272.39,97.44c-11.93,0-18.75-9.94-18.75-22.44s6.81-22.44,18.75-22.44 S291.14,62.5,291.14,75S284.32,97.44,272.39,97.44L272.39,97.44z"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      {/* Second "a" */}
+      <path
+        fill={fill}
+        strokeWidth="0px"
+        d="M497.64,43l-0.44,8.3c-4.51-10.77-13.67-13.82-24.44-13.82c-19.78,0-32.15,17.89-32.15,37.53 s12.36,37.53,32.15,37.53c10.77,0,19.93-3.06,24.44-13.82l0.44,8.3c0,2.76,1.31,4.07,3.64,4.07h15.13V38.93h-15.13 C498.96,38.93,497.64,40.23,497.64,43L497.64,43z M478.14,97.44c-11.93,0-18.75-9.94-18.75-22.44s6.81-22.44,18.75-22.44 S496.89,62.5,496.89,75S490.07,97.44,478.14,97.44z"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+      {/* "r" */}
+      <path
+        fill={fill}
+        strokeWidth="0px"
+        d="M608.98,38.2c-11.2,0-19.2,3.44-22.69,16.82L586,43c0-2.76-1.31-4.07-3.64-4.07h-15.13v72.15h18.91V75 c0-12.65,7.27-20.8,19.78-20.8h3.41l4.59-15.09C612.16,38.36,610.29,38.2,608.98,38.2L608.98,38.2z"
+        style={{ transition: "fill 0.8s ease" }}
+      />
+    </svg>
+  );
+}
+
+export function ReformationLogo({ color }: { color?: string } = {}) {
+  return (
+    <img
+      src="/reformation_logo.svg"
+      alt="Reformation Logo"
+      style={{
+        width: 200,
+        height: 50,
+        color: "red",
+        filter: color ? "invert(1)" : "none",
+      }}
+    />
+  );
+}
+
+/* ─── Brand Logo Dispatcher ─────────────────────────────────── */
+
+import { useCheckoutTheme } from "./ThemeContext";
+
+/** Renders the logo for the active platform */
+export function BrandLogo({ color }: { color?: string } = {}) {
+  const theme = useCheckoutTheme();
+  switch (theme.logo) {
+    case "target":
+      return <TargetLogo color={color} />;
+    case "wayfair":
+      return <WayfairLogo color={color} />;
+    case "walmart":
+      return <WalmartLogo color={color} />;
+    case "reformation":
+      return <ReformationLogo color={color} />;
+    default:
+      return <WalmartLogo color={color} />;
+  }
+}
+
 /* ─── Delivery Method Icons ─────────────────────────────────── */
 
 import type { DeliveryTab } from "./types";
 
-/** Delivery method badge — Door / Pickup (uses same icons as the delivery sheet tabs) */
+/** Delivery method badge — Door / Pickup (uses theme icon paths) */
 export function DeliveryMethodIcon({ type }: { type: DeliveryTab }) {
+  const theme = useCheckoutTheme();
   return (
     <div
       className="flex items-center justify-center"
       style={{ width: 42, height: 42 }}
     >
       <img
-        src={
-          type === "door" ? "/icons/wmt_doorstep.svg" : "/icons/wmt_pickup.svg"
-        }
+        src={type === "door" ? theme.doorstepIcon : theme.pickupIcon}
         alt={type === "door" ? "Doorstep" : "Pickup"}
         style={{ width: 42, height: 42 }}
       />
@@ -344,11 +525,11 @@ export function DeliveryMethodIcon({ type }: { type: DeliveryTab }) {
 
 /* ─── Card Brand Icons ──────────────────────────────────────── */
 
-import { CHECKOUT_THEME } from "./constants";
 import type { CardBrand } from "./utils";
 
 /** Card brand badge — Visa / Mastercard / generic fallback */
 export function CardBrandIcon({ brand }: { brand: CardBrand }) {
+  const theme = useCheckoutTheme();
   if (brand === "visa") {
     return (
       <div
@@ -359,10 +540,10 @@ export function CardBrandIcon({ brand }: { brand: CardBrand }) {
         }}
       >
         <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
-          <path d="M3 9 7 1h2.1L5.1 9H3Z" fill={CHECKOUT_THEME.primaryColor} />
+          <path d="M3 9 7 1h2.1L5.1 9H3Z" fill={theme.primaryColor} />
           <path
             d="M8.2 9 12.2 1h2.1l-4 8H8.2Z"
-            fill={CHECKOUT_THEME.primaryColor}
+            fill={theme.primaryColor}
             opacity="0.65"
           />
         </svg>

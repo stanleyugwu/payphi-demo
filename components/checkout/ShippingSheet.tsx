@@ -10,12 +10,9 @@
 
 "use client";
 
-import {
-  CHECKOUT_THEME,
-  SHIPPING_OPTIONS,
-  type ShippingOption,
-} from "./constants";
+import { SHIPPING_OPTIONS, type ShippingOption } from "./constants";
 import SheetHeader from "./SheetHeader";
+import { useCheckoutTheme } from "./ThemeContext";
 
 interface ShippingSheetProps {
   selectedShipping: ShippingOption | null;
@@ -28,6 +25,8 @@ export default function ShippingSheet({
   onSelect,
   onClose,
 }: ShippingSheetProps) {
+  const theme = useCheckoutTheme();
+
   return (
     <div className="flex-1 flex flex-col pb-6 overflow-y-auto cart-drawer-scroll">
       <SheetHeader
@@ -45,10 +44,10 @@ export default function ShippingSheet({
             <button
               key={key}
               onClick={() => onSelect(key)}
-              className="w-full flex items-center justify-between p-4 py-3 rounded-xl text-left border transition-all hover:bg-black/5"
+              className={`w-full flex items-center justify-between p-4 py-3 text-left border transition-all hover:bg-black/5 ${theme.rounded ? "rounded-xl" : "rounded-xs"}`}
               style={{
                 borderColor: isSelected
-                  ? CHECKOUT_THEME.primaryColor
+                  ? theme.primaryColor
                   : "var(--color-sand)",
                 background: isSelected ? "rgba(0,0,0,0.02)" : "transparent",
               }}
@@ -59,11 +58,9 @@ export default function ShippingSheet({
                   className="w-5 h-5 shrink-0 rounded-full border flex items-center justify-center transition-colors"
                   style={{
                     borderColor: isSelected
-                      ? CHECKOUT_THEME.primaryColor
+                      ? theme.primaryColor
                       : "var(--color-taupe)",
-                    background: isSelected
-                      ? CHECKOUT_THEME.primaryColor
-                      : "transparent",
+                    background: isSelected ? theme.primaryColor : "transparent",
                   }}
                 >
                   {isSelected && (

@@ -7,7 +7,7 @@ import { getProduct } from "@/lib/products";
 import { Link } from "next-view-transitions";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { use, useRef, useState } from "react";
+import { Suspense, use, useRef, useState } from "react";
 
 function ProductDetailContent({ id }: { id: string }) {
   const product = getProduct(id);
@@ -675,8 +675,10 @@ export default function ProductDetailPage({
 
   return (
     <CartProvider>
-      <ProductDetailContent id={id} />
-      <CheckoutDrawer />
+      <Suspense>
+        <ProductDetailContent id={id} />
+        <CheckoutDrawer />
+      </Suspense>
     </CartProvider>
   );
 }

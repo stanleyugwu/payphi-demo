@@ -18,14 +18,70 @@
 
 /* ─── 1. Theme ──────────────────────────────────────────────── */
 
-export const CHECKOUT_THEME = {
-  /** Primary brand color (Walmart Blue) */
-  primaryColor: "#0054E2",
+export interface PlatformTheme {
+  /** Primary brand accent color */
+  primaryColor: string;
+  /** Font stack */
+  fontFamily: string;
+  /** Which logo component to render */
+  logo: "walmart" | "reformation" | "wayfair" | "target";
+  /** Delivery-tab pickup icon path (relative to /public) */
+  pickupIcon: string;
+  /** Delivery-tab doorstep icon path (relative to /public) */
+  doorstepIcon: string;
+  /** When true → pill buttons, large corner radii; when false → squared */
+  rounded: boolean;
+}
 
-  /** Font stack uses the global primary alias for easy swapping */
-  fontFamily:
-    "var(--font-primary), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-} as const;
+const FONT_STACK =
+  "var(--font-primary), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+
+/** Named platform presets — add new brands here */
+export const PLATFORMS: Record<string, PlatformTheme> = {
+  walmart: {
+    primaryColor: "#0054E2",
+    fontFamily: FONT_STACK,
+    logo: "walmart",
+    pickupIcon: "/icons/wmt_pickup.svg",
+    doorstepIcon: "/icons/wmt_doorstep.svg",
+    rounded: true,
+  },
+  reformation: {
+    primaryColor: "#000000",
+    fontFamily: FONT_STACK,
+    logo: "reformation",
+    pickupIcon: "/icons/rf_pickup.svg",
+    doorstepIcon: "/icons/rf_doorstep.svg",
+    rounded: false,
+  },
+  wayfair: {
+    primaryColor: "#7B189F",
+    fontFamily: FONT_STACK,
+    logo: "wayfair",
+    pickupIcon: "/icons/wf_pickup.svg",
+    doorstepIcon: "/icons/wf_doorstep.svg",
+    rounded: true,
+  },
+};
+
+/**
+ * ★ Change this value to switch the entire checkout look & feel.
+ *   Supported keys: "walmart" | "target"
+ */
+export const ACTIVE_PLATFORM = "wayfair";
+
+export const CHECKOUT_THEME: PlatformTheme = PLATFORMS[ACTIVE_PLATFORM];
+
+/* ─── Derived radius tokens ─────────────────────────────────── */
+
+/** Drawer window corner radius */
+export const DRAWER_RADIUS = CHECKOUT_THEME.rounded ? "16px" : "8px";
+/** Bottom-sheet top-corner radius */
+export const SHEET_RADIUS = CHECKOUT_THEME.rounded ? "24px" : "12px";
+/** CTA / primary button border radius */
+export const BUTTON_RADIUS = CHECKOUT_THEME.rounded ? "9999px" : "0px";
+/** Color / size swatch border radius */
+export const SWATCH_RADIUS = CHECKOUT_THEME.rounded ? "8px" : "4px";
 
 /* ─── 2. Shipping Options & Costs ───────────────────────────── */
 

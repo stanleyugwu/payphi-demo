@@ -37,7 +37,6 @@ import CheckoutAnimation from "./CheckoutAnimation";
 
 /* ── checkout module imports ── */
 import {
-  CHECKOUT_THEME,
   ESTIMATED_TAX_RATE,
   SHIPPING_COST_BY_OPTION,
   SHIPPING_OPTIONS,
@@ -46,19 +45,20 @@ import {
 import DeliverySheet from "./DeliverySheet";
 import EstimateSheet from "./EstimateSheet";
 import {
+  BrandLogo,
   CardBrandIcon,
   ChevronDownIcon,
   ChevronIcon,
   CloseIcon,
   DeliveryMethodIcon,
   ShoppingBagIcon,
-  WalmartLogo,
 } from "./Icons";
 import PaymentSheet from "./PaymentSheet";
 import ProductDetailSheet from "./ProductDetailSheet";
 import QuantityStepper from "./QuantityStepper";
 import SheetWrapper from "./SheetWrapper";
 import ShippingSheet from "./ShippingSheet";
+import { useCheckoutTheme } from "./ThemeContext";
 import type {
   DeliverySummary,
   DeliveryTab,
@@ -76,6 +76,7 @@ const SHEET_CLOSE_DELAY_MOBILE_MS = 400;
    ================================================================ */
 
 export default function CheckoutDrawer() {
+  const theme = useCheckoutTheme();
   const {
     items,
     totalItems,
@@ -286,7 +287,7 @@ export default function CheckoutDrawer() {
           background: "var(--color-ivory)",
           boxShadow: "0 8px 40px rgba(0, 0, 0, 0.12)",
           margin: "12px",
-          borderRadius: "16px",
+          borderRadius: theme.drawerRadius,
           animation: isClosing
             ? "drawerSlideOut 0.35s cubic-bezier(0.4, 0, 0.7, 0.2) forwards"
             : "drawerSlideIn 0.45s cubic-bezier(0.32, 0.72, 0, 1) forwards",
@@ -299,16 +300,17 @@ export default function CheckoutDrawer() {
           className="w-[98%] self-center flex items-center h-2 overflow-hidden shrink-0"
           style={{
             background: "var(--color-cream)",
-            borderTopLeftRadius: "16px",
-            borderTopRightRadius: "16px",
+            borderTopLeftRadius: theme.drawerRadius,
+            borderTopRightRadius: theme.drawerRadius,
           }}
         >
           <div
             className="h-full transition-all duration-500 ease-out"
             style={{
               width: `${progressPercent}%`,
-              background: CHECKOUT_THEME.primaryColor,
-              borderTopRightRadius: progressPercent >= 100 ? "16px" : "0px",
+              background: theme.primaryColor,
+              borderTopRightRadius:
+                progressPercent >= 100 ? theme.drawerRadius : "0px",
             }}
           />
         </div>
@@ -317,7 +319,7 @@ export default function CheckoutDrawer() {
         <div className="flex flex-col py-4">
           <div className="relative px-6 flex items-center justify-center">
             <div className="flex items-center gap-2">
-              <WalmartLogo />
+              <BrandLogo />
             </div>
             <button
               onClick={closeCheckout}
@@ -378,7 +380,7 @@ export default function CheckoutDrawer() {
                 <p
                   className="text-[15px] font-semibold"
                   style={{
-                    fontFamily: CHECKOUT_THEME.fontFamily,
+                    fontFamily: theme.fontFamily,
                     color: "var(--color-graphite)",
                   }}
                 >
@@ -428,7 +430,7 @@ export default function CheckoutDrawer() {
                 <p
                   className="text-[15px] font-semibold"
                   style={{
-                    fontFamily: CHECKOUT_THEME.fontFamily,
+                    fontFamily: theme.fontFamily,
                     color: "var(--color-graphite)",
                   }}
                 >
@@ -467,7 +469,7 @@ export default function CheckoutDrawer() {
               <p
                 className="text-[15px] font-semibold"
                 style={{
-                  fontFamily: CHECKOUT_THEME.fontFamily,
+                  fontFamily: theme.fontFamily,
                   color: "var(--color-graphite)",
                 }}
               >
@@ -491,12 +493,13 @@ export default function CheckoutDrawer() {
             <button
               onClick={handleCheckout}
               disabled={!isCheckoutReady}
-              className="btn-press w-full mt-1 mb-1 py-3.5 rounded-full text-[13px] font-bold transition-all duration-300"
+              className="btn-press w-full mt-1 mb-1 py-3.5 text-[13px] font-bold transition-all duration-300"
               style={{
-                background: CHECKOUT_THEME.primaryColor,
+                background: theme.primaryColor,
                 color: "var(--color-ivory)",
                 opacity: isCheckoutReady ? 1 : 0.45,
                 cursor: isCheckoutReady ? "pointer" : "not-allowed",
+                borderRadius: theme.buttonRadius,
               }}
             >
               Checkout
@@ -591,6 +594,7 @@ export default function CheckoutDrawer() {
 
 /** Empty bag illustration + "Continue Shopping" CTA */
 function EmptyState({ onClose }: { onClose: () => void }) {
+  const theme = useCheckoutTheme();
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
       <div
@@ -602,7 +606,7 @@ function EmptyState({ onClose }: { onClose: () => void }) {
       <p
         className="text-lg mb-2"
         style={{
-          fontFamily: CHECKOUT_THEME.fontFamily,
+          fontFamily: theme.fontFamily,
           color: "var(--color-graphite)",
           fontWeight: 500,
         }}
@@ -621,7 +625,7 @@ function EmptyState({ onClose }: { onClose: () => void }) {
         onClick={onClose}
         className="btn-press px-8 py-3 rounded-lg text-[12px] tracking-[0.15em] uppercase font-medium"
         style={{
-          background: CHECKOUT_THEME.primaryColor,
+          background: theme.primaryColor,
           color: "var(--color-ivory)",
         }}
       >
@@ -647,6 +651,7 @@ function CartItemRow({
   onIncrement: () => void;
   onClick: () => void;
 }) {
+  const theme = useCheckoutTheme();
   const color = item.product.colors[item.colorIdx];
 
   return (
@@ -663,7 +668,7 @@ function CartItemRow({
       <div className="flex gap-3">
         {/* Thumbnail */}
         <div
-          className="relative shrink-0 w-[65px] h-[80px] rounded-lg overflow-hidden"
+          className={`relative shrink-0 w-[65px] h-[80px] overflow-hidden ${theme.rounded ? "rounded-lg" : "rounded-none"}`}
           style={{ background: "var(--color-sand)" }}
         >
           <Image
@@ -681,7 +686,7 @@ function CartItemRow({
             <p
               className="text-[15px] line-clamp-2 leading-snug pr-8"
               style={{
-                fontFamily: CHECKOUT_THEME.fontFamily,
+                fontFamily: theme.fontFamily,
                 color: "var(--color-graphite)",
                 fontWeight: 600,
               }}
@@ -704,11 +709,11 @@ function CartItemRow({
               onDecrement={onDecrement}
               onIncrement={onIncrement}
               size="sm"
-              className="flex-1 justify-between"
+              className={`flex-1 justify-between ${theme.rounded ? "rounded-full" : "rounded-none"}`}
             />
             {/* Color pill */}
             <button
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-medium transition-colors hover:bg-black/5"
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-medium transition-colors hover:bg-black/5 ${theme.rounded ? "rounded-full" : "rounded-none"}`}
               style={{
                 border: "1px solid var(--color-sand)",
 
@@ -727,7 +732,7 @@ function CartItemRow({
 
             {/* Size pill */}
             <button
-              className="flex rounded-full items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-medium transition-colors hover:bg-black/5"
+              className={`flex rounded-full items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-medium transition-colors hover:bg-black/5 ${theme.rounded ? "rounded-full" : "rounded-none"}`}
               style={{
                 border: "1px solid var(--color-sand)",
                 color: "var(--color-charcoal)",
@@ -757,6 +762,7 @@ function FooterRow({
   hasValue: boolean;
   onClick: () => void;
 }) {
+  const theme = useCheckoutTheme();
   return (
     <button
       onClick={onClick}
@@ -766,7 +772,7 @@ function FooterRow({
         <p
           className="text-[15px] font-semibold"
           style={{
-            fontFamily: CHECKOUT_THEME.fontFamily,
+            fontFamily: theme.fontFamily,
             color: "var(--color-graphite)",
           }}
         >

@@ -16,6 +16,7 @@
 "use client";
 
 import React from "react";
+import { useCheckoutTheme } from "./ThemeContext";
 
 interface SheetWrapperProps {
   /** Whether the sheet is animating out (slide-down) */
@@ -32,10 +33,11 @@ export default function SheetWrapper({
   height = "85%",
   children,
 }: SheetWrapperProps) {
+  const theme = useCheckoutTheme();
   return (
     <div
       className="checkout-sheet-wrapper absolute inset-0 z-[1000] flex flex-col justify-end overflow-hidden"
-      style={{ borderRadius: "16px" }}
+      style={{ borderRadius: theme.drawerRadius }}
     >
       {/* Backdrop */}
       <div
@@ -54,8 +56,8 @@ export default function SheetWrapper({
         className="relative w-full bg-white flex flex-col"
         style={{
           height,
-          borderTopLeftRadius: "24px",
-          borderTopRightRadius: "24px",
+          borderTopLeftRadius: theme.sheetRadius,
+          borderTopRightRadius: theme.sheetRadius,
           boxShadow: "0 -4px 20px rgba(0,0,0,0.08)",
           animation: animatingOut
             ? "sheetSlideDown var(--sheet-exit-duration, 0.35s) cubic-bezier(0.4, 0, 0.7, 0.2) forwards"

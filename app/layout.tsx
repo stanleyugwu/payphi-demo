@@ -1,7 +1,8 @@
+import { CheckoutThemeProvider } from "@/components/checkout/ThemeContext";
 import type { Metadata } from "next";
 import { ViewTransitions } from "next-view-transitions";
-import localFont from "next/font/local";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 const inter = Inter({
@@ -36,14 +37,14 @@ export default function RootLayout({
 }>) {
   return (
     <ViewTransitions>
-      <html
-        lang="en"
-        className={`${inter.variable} ${bogleBlack.variable} ${cormorant.variable}`}
-      >
-        <body className="antialiased">
-          {children}
-        </body>
-      </html>
+      <CheckoutThemeProvider>
+        <html
+          lang="en"
+          className={`${inter.variable} ${bogleBlack.variable} ${cormorant.variable}`}
+        >
+          <body className="antialiased">{children}</body>
+        </html>
+      </CheckoutThemeProvider>
     </ViewTransitions>
   );
 }

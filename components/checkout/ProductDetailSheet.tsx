@@ -18,10 +18,10 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import type { CartItem } from "../CartContext";
-import { CHECKOUT_THEME } from "./constants";
 import { ChevronIcon } from "./Icons";
 import QuantityStepper from "./QuantityStepper";
 import SheetFooterButton from "./SheetFooterButton";
+import { useCheckoutTheme } from "./ThemeContext";
 
 interface ProductDetailSheetProps {
   /** The currently selected cart item */
@@ -40,6 +40,7 @@ export default function ProductDetailSheet({
   onIncrement,
   onUpdate,
 }: ProductDetailSheetProps) {
+  const theme = useCheckoutTheme();
   const product = item.product;
 
   /* ── local sheet state ── */
@@ -55,7 +56,9 @@ export default function ProductDetailSheet({
   const gallery = color?.gallery ?? [];
 
   return (
-    <div className="flex-1 flex flex-col bg-white rounded-t-[24px] overflow-hidden">
+    <div
+      className={`flex-1 flex flex-col bg-white overflow-hidden ${theme.rounded ? "rounded-t-[24px]" : "rounded-t-xs"}`}
+    >
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto cart-drawer-scroll pb-24">
         {/* ── Horizontal Image Gallery ── */}
@@ -102,12 +105,14 @@ export default function ProductDetailSheet({
                     behavior: "smooth",
                   });
                 }}
-                className="rounded-full transition-all duration-200"
+                className={`${theme.rounded ? "rounded-full" : "rounded-xs"} transition-all duration-200`}
                 style={{
                   width: galleryIdx === i ? 18 : 6,
                   height: 6,
                   background:
-                    galleryIdx === i ? "#000000" : "var(--color-taupe)",
+                    galleryIdx === i
+                      ? theme.primaryColor
+                      : "var(--color-taupe)",
                   opacity: galleryIdx === i ? 1 : 0.4,
                 }}
               />
@@ -127,7 +132,7 @@ export default function ProductDetailSheet({
               <p
                 className="text-[15px] font-semibold"
                 style={{
-                  fontFamily: CHECKOUT_THEME.fontFamily,
+                  fontFamily: theme.fontFamily,
                   color: "var(--color-graphite)",
                 }}
               >
@@ -183,7 +188,7 @@ export default function ProductDetailSheet({
               <p
                 className="text-[15px] font-semibold"
                 style={{
-                  fontFamily: CHECKOUT_THEME.fontFamily,
+                  fontFamily: theme.fontFamily,
                   color: "var(--color-graphite)",
                 }}
               >
@@ -203,11 +208,12 @@ export default function ProductDetailSheet({
                       behavior: "smooth",
                     });
                   }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all"
+                  className="flex items-center gap-2 px-3 py-2 transition-all"
                   style={{
+                    borderRadius: theme.swatchRadius,
                     border:
                       colorIdx === idx
-                        ? `1px solid ${CHECKOUT_THEME.primaryColor}`
+                        ? `1px solid ${theme.primaryColor}`
                         : "1px solid transparent",
                     background:
                       colorIdx === idx
@@ -242,7 +248,7 @@ export default function ProductDetailSheet({
               <p
                 className="text-[15px] font-semibold"
                 style={{
-                  fontFamily: CHECKOUT_THEME.fontFamily,
+                  fontFamily: theme.fontFamily,
                   color: "var(--color-graphite)",
                 }}
               >
@@ -255,17 +261,18 @@ export default function ProductDetailSheet({
                 <button
                   key={idx}
                   onClick={() => setSizeIdx(idx)}
-                  className="px-4 py-1.5 rounded-lg text-[13px] font-medium transition-all"
+                  className="px-4 py-1.5 text-[13px] font-medium transition-all"
                   style={{
+                    borderRadius: theme.swatchRadius,
                     border:
                       sizeIdx === idx
-                        ? `1px solid ${CHECKOUT_THEME.primaryColor}`
+                        ? `1px solid ${theme.primaryColor}`
                         : "1px solid var(--color-sand)",
                     background:
                       sizeIdx === idx ? "rgba(0,83,226,0.04)" : "transparent",
                     color:
                       sizeIdx === idx
-                        ? CHECKOUT_THEME.primaryColor
+                        ? theme.primaryColor
                         : "var(--color-graphite)",
                   }}
                 >
@@ -284,7 +291,7 @@ export default function ProductDetailSheet({
               <p
                 className="text-[15px] font-semibold"
                 style={{
-                  fontFamily: CHECKOUT_THEME.fontFamily,
+                  fontFamily: theme.fontFamily,
                   color: "var(--color-graphite)",
                 }}
               >
@@ -295,6 +302,7 @@ export default function ProductDetailSheet({
                 onDecrement={() => onDecrement(item.key)}
                 onIncrement={() => onIncrement(item.key)}
                 size="md"
+                className={theme.rounded ? "rounded-full" : "rounded-none"}
               />
             </div>
           </div>
@@ -304,7 +312,7 @@ export default function ProductDetailSheet({
             <p
               className="text-[15px] font-semibold"
               style={{
-                fontFamily: CHECKOUT_THEME.fontFamily,
+                fontFamily: theme.fontFamily,
                 color: "var(--color-graphite)",
               }}
             >
@@ -313,7 +321,7 @@ export default function ProductDetailSheet({
             <p
               className="text-[17px] font-bold"
               style={{
-                fontFamily: CHECKOUT_THEME.fontFamily,
+                fontFamily: theme.fontFamily,
                 color: "var(--color-graphite)",
               }}
             >
