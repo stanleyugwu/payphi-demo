@@ -3,6 +3,7 @@
 import type { Product } from "@/lib/products";
 import { Link } from "next-view-transitions";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import { useCart } from "./CartContext";
 
@@ -20,6 +21,8 @@ export default function ProductCard({
   const [liked, setLiked] = useState(false);
   const bagBtnRef = useRef<HTMLButtonElement>(null);
   const { addItem, removeItem } = useCart();
+  const params = useSearchParams();
+  const brand = params.get("brand");
 
   const currentColor = product.colors[colorIdx];
 
@@ -70,7 +73,7 @@ export default function ProductCard({
 
   return (
     <Link
-      href={`/products/${product.id}`}
+      href={`/products/${brand ? product.id + "?brand=" + brand : product.id}`}
       className={`animate-fade-up delay-${index + 2} luxury-card group block relative overflow-hidden rounded-lg`}
       style={{ background: "var(--color-cream)" }}
     >
