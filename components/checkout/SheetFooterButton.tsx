@@ -10,7 +10,7 @@
 
 "use client";
 
-import { CHECKOUT_THEME } from "./constants";
+import { useCheckoutTheme } from "./ThemeContext";
 
 interface SheetFooterButtonProps {
   label: string;
@@ -23,26 +23,30 @@ export default function SheetFooterButton({
   onClick,
   disabled = false,
 }: SheetFooterButtonProps) {
+  const theme = useCheckoutTheme();
   return (
     <div
-      className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md rounded-b-[24px]"
+      className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md"
       style={{
         zIndex: 10,
         paddingTop: "1rem",
         paddingLeft: "1rem",
         paddingRight: "1rem",
         paddingBottom: "calc(1rem + env(safe-area-inset-bottom, 0px))",
+        borderBottomLeftRadius: theme.sheetRadius,
+        borderBottomRightRadius: theme.sheetRadius,
       }}
     >
       <button
         onClick={onClick}
         disabled={disabled}
-        className="btn-press w-full py-3.5 rounded-full text-[13px] font-bold transition-all"
+        className="btn-press w-full py-3.5 text-[13px] font-bold transition-all"
         style={{
-          background: CHECKOUT_THEME.primaryColor,
+          background: theme.primaryColor,
           color: "var(--color-ivory)",
-          fontFamily: CHECKOUT_THEME.fontFamily,
+          fontFamily: theme.fontFamily,
           opacity: disabled ? 0.5 : 1,
+          borderRadius: theme.buttonRadius,
         }}
       >
         {label}

@@ -16,6 +16,7 @@ import { CHECKOUT_THEME } from "./constants";
 import { CardBrandIcon } from "./Icons";
 import SheetFooterButton from "./SheetFooterButton";
 import SheetHeader from "./SheetHeader";
+import { useCheckoutTheme } from "./ThemeContext";
 import {
   type CardBrand,
   detectCardBrand,
@@ -70,8 +71,10 @@ export default function PaymentSheet({
     onSave(cardBrand, cardLast4);
   };
 
+  const theme = useCheckoutTheme();
+
   return (
-    <div className="flex-1 flex flex-col pt-2 bg-white rounded-t-[24px] overflow-hidden">
+    <div className="flex-1 flex flex-col pt-2 bg-white overflow-hidden">
       <SheetHeader
         title="Payment"
         subtitle="Add your card details to continue"
@@ -82,7 +85,7 @@ export default function PaymentSheet({
       <div className="flex-1 overflow-y-auto cart-drawer-scroll px-6 pb-24">
         {/* Card preview */}
         <div
-          className="rounded-xl p-4 mb-4"
+          className={`p-4 mb-4 ${theme.rounded ? "rounded-xl" : "rounded-none"}`}
           style={{
             border: "1px solid var(--color-sand)",
             background: "rgba(0,0,0,0.02)",
@@ -134,7 +137,7 @@ export default function PaymentSheet({
                     cardNumber: formatCardNumber(e.target.value),
                   }))
                 }
-                className="w-full px-4 py-3 pr-[84px] rounded-xl border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors"
+                className={`w-full px-4 py-3 pr-[84px] border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors ${theme.rounded ? "rounded-xl" : "rounded-none"}`}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
                 <CardBrandIcon brand={cardBrand} />
@@ -166,7 +169,7 @@ export default function PaymentSheet({
                   cardholderName: e.target.value,
                 }))
               }
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors"
+              className={`w-full px-4 py-3 border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors ${theme.rounded ? "rounded-xl" : "rounded-none"}`}
             />
           </div>
 
@@ -188,7 +191,7 @@ export default function PaymentSheet({
                     expiry: formatExpiry(e.target.value),
                   }))
                 }
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors"
+                className={`w-full px-4 py-3 border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors ${theme.rounded ? "rounded-xl" : "rounded-none"}`}
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -207,7 +210,7 @@ export default function PaymentSheet({
                     cvv: e.target.value.replace(/\D/g, "").slice(0, 4),
                   }))
                 }
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors"
+                className={`w-full px-4 py-3 border border-gray-200 text-[14px] focus:outline-none focus:border-gray-800 transition-colors ${theme.rounded ? "rounded-xl" : "rounded-none"}`}
               />
             </div>
           </div>

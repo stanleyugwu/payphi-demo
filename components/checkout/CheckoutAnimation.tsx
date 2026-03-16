@@ -16,8 +16,8 @@
 
 import { useEffect, useState } from "react";
 import { CheckoutSpinner, SPINNER_TOTAL_MS } from "./CheckoutSpinner";
-import { CHECKOUT_THEME } from "./constants";
-import { WalmartLogo } from "./Icons";
+import { BrandLogo } from "./Icons";
+import { useCheckoutTheme } from "./ThemeContext";
 
 /** ms — how long the slide/bg-morph takes */
 const SLIDE_MS = 1400;
@@ -39,6 +39,7 @@ export default function CheckoutAnimation({
 }: {
   onComplete: () => void;
 }) {
+  const theme = useCheckoutTheme();
   const [sliding, setSliding] = useState(false);
 
   useEffect(() => {
@@ -56,9 +57,9 @@ export default function CheckoutAnimation({
         position: "absolute",
         inset: 0,
         zIndex: 50,
-        borderRadius: "16px",
+        borderRadius: theme.drawerRadius,
         overflow: "hidden",
-        background: sliding ? CHECKOUT_THEME.primaryColor : "#ffffff",
+        background: sliding ? theme.primaryColor : "#ffffff",
         transition: `background ${SLIDE_MS}ms ease`,
       }}
     >
@@ -84,7 +85,7 @@ export default function CheckoutAnimation({
             transition: `transform ${SLIDE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
           }}
         >
-          <WalmartLogo color={sliding ? "#ffffff" : undefined} />
+          <BrandLogo color={sliding ? "#ffffff" : undefined} />
         </div>
 
         {/* ─── Spinner / Checkmark ─── */}

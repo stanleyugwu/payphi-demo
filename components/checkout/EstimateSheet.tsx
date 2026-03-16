@@ -10,7 +10,7 @@
 
 "use client";
 
-import { CHECKOUT_THEME } from "./constants";
+import { useCheckoutTheme } from "./ThemeContext";
 import { formatCurrency } from "./utils";
 
 interface EstimateSheetProps {
@@ -30,6 +30,7 @@ export default function EstimateSheet({
   itemLabel,
   onClose,
 }: EstimateSheetProps) {
+  const theme = useCheckoutTheme();
   return (
     <div className="flex-1 flex flex-col px-6 pb-6 pt-5">
       <h3
@@ -52,7 +53,7 @@ export default function EstimateSheet({
           <p
             className="text-[15px]"
             style={{
-              fontFamily: CHECKOUT_THEME.fontFamily,
+              fontFamily: theme.fontFamily,
               color: "var(--color-graphite)",
             }}
           >
@@ -61,7 +62,7 @@ export default function EstimateSheet({
           <p
             className="text-[15px] font-semibold"
             style={{
-              fontFamily: CHECKOUT_THEME.fontFamily,
+              fontFamily: theme.fontFamily,
               color:
                 shippingCost === 0
                   ? "var(--color-gold)"
@@ -90,7 +91,7 @@ export default function EstimateSheet({
           <p
             className="text-[15px] font-semibold"
             style={{
-              fontFamily: CHECKOUT_THEME.fontFamily,
+              fontFamily: theme.fontFamily,
               color: "var(--color-graphite)",
             }}
           >
@@ -99,7 +100,7 @@ export default function EstimateSheet({
           <p
             className="text-[15px] font-bold"
             style={{
-              fontFamily: CHECKOUT_THEME.fontFamily,
+              fontFamily: theme.fontFamily,
               color: "var(--color-graphite)",
             }}
           >
@@ -111,11 +112,12 @@ export default function EstimateSheet({
       {/* Close button */}
       <button
         onClick={onClose}
-        className="btn-press w-full mt-auto py-3.5 rounded-full text-[13px] tracking-[0.15em] uppercase font-medium transition-all"
+        className="btn-press w-full mt-auto py-3.5 text-[13px] tracking-[0.15em] uppercase font-medium transition-all"
         style={{
-          background: CHECKOUT_THEME.primaryColor,
+          background: theme.primaryColor,
           color: "var(--color-ivory)",
-          fontFamily: CHECKOUT_THEME.fontFamily,
+          fontFamily: theme.fontFamily,
+          borderRadius: theme.buttonRadius,
         }}
       >
         Close
@@ -135,12 +137,13 @@ function LineItem({
   value: string;
   labelWeight?: number;
 }) {
+  const theme = useCheckoutTheme();
   return (
     <div className="flex items-center justify-between gap-3">
       <p
         className="text-[15px]"
         style={{
-          fontFamily: CHECKOUT_THEME.fontFamily,
+          fontFamily: theme.fontFamily,
           color: "var(--color-graphite)",
           fontWeight: labelWeight,
         }}
@@ -150,7 +153,7 @@ function LineItem({
       <p
         className="text-[15px] font-medium"
         style={{
-          fontFamily: CHECKOUT_THEME.fontFamily,
+          fontFamily: theme.fontFamily,
           color: "var(--color-graphite)",
         }}
       >
