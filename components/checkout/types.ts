@@ -20,11 +20,11 @@ export type SheetType =
   | null;
 
 /** Toggle state for the delivery sheet tabs */
-export type DeliveryTab = "door" | "pickup";
+export type DeliveryOption = "door" | "pickup";
 
 /** Persisted summary shown on the main drawer after the user confirms delivery */
 export interface DeliverySummary {
-  type: DeliveryTab;
+  type: DeliveryOption;
   title: string;
   subtitle: string;
 }

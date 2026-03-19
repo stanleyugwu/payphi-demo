@@ -1,3 +1,4 @@
+import Body from "@/components/Body";
 import { CheckoutThemeProvider } from "@/components/checkout/ThemeContext";
 import type { Metadata } from "next";
 import { ViewTransitions } from "next-view-transitions";
@@ -13,8 +14,20 @@ const inter = Inter({
 });
 
 const bogleBlack = localFont({
-  src: "../public/BOGLEBLACK.otf",
-  variable: "--font-bogle",
+  src: "../public/fonts/bogleblack.otf",
+  variable: "--font-walmart",
+  display: "swap",
+});
+
+const newTimes = localFont({
+  src: "../public/fonts/newtimes.otf",
+  variable: "--font-reformation",
+  display: "swap",
+});
+
+const sofiaPro = localFont({
+  src: "../public/fonts/sofia-pro.otf",
+  variable: "--font-wayfair",
   display: "swap",
 });
 
@@ -48,9 +61,9 @@ export default function RootLayout({
         <CheckoutThemeProvider>
           <html
             lang="en"
-            className={`${inter.variable} ${bogleBlack.variable} ${cormorant.variable}`}
+            className={`${inter.variable} ${sofiaPro.variable} ${bogleBlack.variable} ${newTimes.variable} ${cormorant.variable}`}
           >
-            <body className="antialiased">{children}</body>
+            <Body>{children}</Body>
           </html>
         </CheckoutThemeProvider>
       </Suspense>

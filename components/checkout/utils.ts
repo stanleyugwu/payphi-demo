@@ -15,12 +15,23 @@
 
 /* ─── 1. Card Brand Detection & Formatting ──────────────────── */
 
-export type CardBrand = "visa" | "mastercard" | "unknown";
+export type CardBrand =
+  | "visa"
+  | "mastercard"
+  | "amex"
+  | "discover"
+  | "dinersclub"
+  | "jcb"
+  | "unknown";
 
 /** Detect card network from the first few digits */
 export function detectCardBrand(cardDigits: string): CardBrand {
   if (/^4/.test(cardDigits)) return "visa";
   if (/^(5[1-5]|2[2-7])/.test(cardDigits)) return "mastercard";
+  if (/^3[47]/.test(cardDigits)) return "amex";
+  if (/^6(?:011|5)/.test(cardDigits)) return "discover";
+  if (/^3(?:0[0-5]|[68])/.test(cardDigits)) return "dinersclub";
+  if (/^(?:2131|1800|35)/.test(cardDigits)) return "jcb";
   return "unknown";
 }
 

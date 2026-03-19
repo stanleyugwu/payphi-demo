@@ -112,7 +112,7 @@ export default function EstimateSheet({
       {/* Close button */}
       <button
         onClick={onClose}
-        className="btn-press w-full mt-auto py-3.5 text-[13px] tracking-[0.15em] uppercase font-medium transition-all"
+        className="btn-press w-full mt-auto py-3.5 text-[13px] tracking-[0.15em] capitalize font-medium transition-all"
         style={{
           background: theme.primaryColor,
           color: "var(--color-ivory)",

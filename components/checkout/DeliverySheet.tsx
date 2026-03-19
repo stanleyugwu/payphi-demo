@@ -21,7 +21,7 @@ import { PICKUP_STATIONS, TIMEFRAMES } from "./constants";
 import SheetFooterButton from "./SheetFooterButton";
 import SheetHeader from "./SheetHeader";
 import { useCheckoutTheme } from "./ThemeContext";
-import type { DeliverySummary, DeliveryTab } from "./types";
+import type { DeliveryOption, DeliverySummary } from "./types";
 import type { DateOption } from "./utils";
 
 const STATE_OPTIONS = [
@@ -92,8 +92,9 @@ interface DeliverySheetProps {
   onConfirm: (summary: DeliverySummary) => void;
   onClose: () => void;
   /* ── lifted state from parent ── */
-  deliveryTab: DeliveryTab;
-  setDeliveryTab: (tab: DeliveryTab) => void;
+  deliveryTab: DeliveryOption;
+  tabVisible?: boolean;
+  setDeliveryTab: (tab: DeliveryOption) => void;
   doorDetails: DoorDetails;
   setDoorDetails: React.Dispatch<React.SetStateAction<DoorDetails>>;
   selectedStation: string | null;
@@ -111,6 +112,7 @@ export default function DeliverySheet({
   onConfirm,
   onClose,
   deliveryTab,
+  tabVisible = true,
   setDeliveryTab,
   doorDetails,
   setDoorDetails,
@@ -172,38 +174,40 @@ export default function DeliverySheet({
       {/* Header */}
       <SheetHeader
         title="Delivery Options"
-        subtitle="How would you like to receive your order?"
+        subtitle={"How would you like to receive your order?"}
         onClose={onClose}
       />
 
       {/* Tab bar */}
-      <div className="px-6 shrink-0 mb-4">
-        <div
-          className={`flex p-1 ${theme.rounded ? "rounded-xl" : "rounded-xs"}`}
-          style={{ background: "rgba(0,0,0,0.03)" }}
-        >
-          <TabButton
-            label="Pickup"
-            icon={
-              <img src={theme.pickupIcon} alt="Pickup" className="w-8 h-8" />
-            }
-            isActive={deliveryTab === "pickup"}
-            onClick={() => setDeliveryTab("pickup")}
-          />
-          <TabButton
-            label="Doorstep"
-            icon={
-              <img
-                src={theme.doorstepIcon}
-                alt="Doorstep"
-                className="w-10 h-10"
-              />
-            }
-            isActive={deliveryTab === "door"}
-            onClick={() => setDeliveryTab("door")}
-          />
+      {tabVisible && (
+        <div className="px-6 shrink-0 mb-4">
+          <div
+            className={`flex p-1 ${theme.rounded ? "rounded-xl" : "rounded-xs"}`}
+            style={{ background: "rgba(0,0,0,0.03)" }}
+          >
+            <TabButton
+              label="Pickup"
+              icon={
+                <img src={theme.pickupIcon} alt="Pickup" className="w-8 h-8" />
+              }
+              isActive={deliveryTab === "pickup"}
+              onClick={() => setDeliveryTab("pickup")}
+            />
+            <TabButton
+              label="Doorstep"
+              icon={
+                <img
+                  src={theme.doorstepIcon}
+                  alt="Doorstep"
+                  className="w-10 h-10"
+                />
+              }
+              isActive={deliveryTab === "door"}
+              onClick={() => setDeliveryTab("door")}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto cart-drawer-scroll px-6 pb-20">

@@ -16,6 +16,8 @@
  * ============================================================
  */
 
+import { DeliveryOption } from "./types";
+
 /* ─── 1. Theme ──────────────────────────────────────────────── */
 
 export interface PlatformTheme {
@@ -31,36 +33,41 @@ export interface PlatformTheme {
   doorstepIcon: string;
   /** When true → pill buttons, large corner radii; when false → squared */
   rounded: boolean;
+  /** available delivery options */
+  availableDeliveryOptions: "all" | DeliveryOption;
 }
 
-const FONT_STACK =
-  "var(--font-primary), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+const COMMON_FONTS =
+  "var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
 /** Named platform presets — add new brands here */
 export const PLATFORMS: Record<string, PlatformTheme> = {
   walmart: {
     primaryColor: "#0054E2",
-    fontFamily: FONT_STACK,
+    fontFamily: `var(--font-walmart),${COMMON_FONTS}`,
     logo: "walmart",
     pickupIcon: "/icons/wmt_pickup.svg",
     doorstepIcon: "/icons/wmt_doorstep.svg",
     rounded: true,
+    availableDeliveryOptions: "all",
   },
   reformation: {
     primaryColor: "#000000",
-    fontFamily: FONT_STACK,
+    fontFamily: `var(--font-reformation),${COMMON_FONTS}`,
     logo: "reformation",
     pickupIcon: "/icons/rf_pickup.svg",
     doorstepIcon: "/icons/rf_doorstep.svg",
     rounded: false,
+    availableDeliveryOptions: "door",
   },
   wayfair: {
     primaryColor: "#7B189F",
-    fontFamily: FONT_STACK,
+    fontFamily: `var(--font-wayfair),${COMMON_FONTS}`,
     logo: "wayfair",
     pickupIcon: "/icons/wf_pickup.svg",
     doorstepIcon: "/icons/wf_doorstep.svg",
     rounded: true,
+    availableDeliveryOptions: "door",
   },
 };
 

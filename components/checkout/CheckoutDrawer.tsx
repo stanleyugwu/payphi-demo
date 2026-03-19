@@ -60,8 +60,8 @@ import SheetWrapper from "./SheetWrapper";
 import ShippingSheet from "./ShippingSheet";
 import { useCheckoutTheme } from "./ThemeContext";
 import type {
+  DeliveryOption,
   DeliverySummary,
-  DeliveryTab,
   PaymentSummary,
   SheetType,
 } from "./types";
@@ -137,7 +137,13 @@ export default function CheckoutDrawer() {
   });
 
   /* ── delivery form state (persisted across sheet open/close) ── */
-  const [deliveryTab, setDeliveryTab] = useState<DeliveryTab>("door");
+  const defaultDeliveryOption =
+    theme.availableDeliveryOptions === "all"
+      ? "pickup"
+      : theme.availableDeliveryOptions;
+  const [deliveryTab, setDeliveryTab] = useState<DeliveryOption>(
+    defaultDeliveryOption,
+  );
   const [doorDetails, setDoorDetails] = useState({
     fullname: "",
     address: "",
@@ -297,7 +303,7 @@ export default function CheckoutDrawer() {
       >
         {/* ─── Progress bar (flush top edge) ─── */}
         <div
-          className="w-[98%] self-center flex items-center h-2 overflow-hidden shrink-0"
+          className={`${theme.rounded ? "w-[98%]" : "w-full"} self-center flex items-center h-2 overflow-hidden shrink-0`}
           style={{
             background: "var(--color-cream)",
             borderTopLeftRadius: theme.drawerRadius,
@@ -562,6 +568,7 @@ export default function CheckoutDrawer() {
                 onConfirm={handleConfirmDelivery}
                 onClose={closeSheet}
                 deliveryTab={deliveryTab}
+                tabVisible={theme.availableDeliveryOptions === "all"}
                 setDeliveryTab={setDeliveryTab}
                 doorDetails={doorDetails}
                 setDoorDetails={setDoorDetails}

@@ -12,7 +12,7 @@
   --color-muted: #8a8278;
 
   /* App-wide primary font alias (swap this single token to change the main font) */
-  --font-primary: var(--font-bogle);
+  --font-primary: var(--font-walmart);
 }
 
 @theme inline {
