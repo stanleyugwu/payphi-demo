@@ -553,6 +553,10 @@ import type { DeliveryOption } from "./types";
 /** Delivery method badge — Door / Pickup (uses theme icon paths) */
 export function DeliveryMethodIcon({ type }: { type: DeliveryOption }) {
   const theme = useCheckoutTheme();
+  if (!theme.doorstepIcon || !theme.pickupIcon) {
+    return null;
+  }
+
   return (
     <div
       className="flex items-center justify-center"

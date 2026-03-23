@@ -14,8 +14,10 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
-import { CheckoutSpinner, SPINNER_TOTAL_MS } from "./CheckoutSpinner";
+import { DotLottie, DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { useEffect, useRef, useState } from "react";
+import checkAnimation from "../../public/lottie/checkmark.json";
+import { SPINNER_TOTAL_MS } from "./CheckoutSpinner";
 import { BrandLogo } from "./Icons";
 import { useCheckoutTheme } from "./ThemeContext";
 
@@ -39,15 +41,21 @@ export default function CheckoutAnimation({
 }: {
   onComplete: () => void;
 }) {
+  const lottieRef = useRef<DotLottie>(null);
   const theme = useCheckoutTheme();
   const [sliding, setSliding] = useState(false);
 
   useEffect(() => {
     const t0 = setTimeout(() => setSliding(true), 30);
-    const t1 = setTimeout(() => onComplete(), TOTAL_MS);
+    // const t1 = setTimeout(() => onComplete(), TOTAL_MS);
+    const t2 = setTimeout(() => {
+      lottieRef.current?.play();
+    }, SLIDE_MS);
+
     return () => {
       clearTimeout(t0);
-      clearTimeout(t1);
+      // clearTimeout(t1);
+      clearTimeout(t2);
     };
   }, [onComplete]);
 
@@ -98,7 +106,16 @@ export default function CheckoutAnimation({
               : "none",
           }}
         >
-          <CheckoutSpinner size={72} color="#ffffff" />
+          <DotLottieReact
+            data={checkAnimation}
+            dotLottieRefCallback={(ref) => {
+              lottieRef.current = ref;
+            }}
+            style={{
+              width: 100,
+              height: 100,
+            }}
+          />
         </div>
       </div>
     </div>

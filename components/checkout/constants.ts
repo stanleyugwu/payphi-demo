@@ -28,9 +28,9 @@ export interface PlatformTheme {
   /** Which logo component to render */
   logo: "walmart" | "reformation" | "wayfair" | "target";
   /** Delivery-tab pickup icon path (relative to /public) */
-  pickupIcon: string;
+  pickupIcon?: string;
   /** Delivery-tab doorstep icon path (relative to /public) */
-  doorstepIcon: string;
+  doorstepIcon?: string;
   /** When true → pill buttons, large corner radii; when false → squared */
   rounded: boolean;
   /** available delivery options */
@@ -55,8 +55,6 @@ export const PLATFORMS: Record<string, PlatformTheme> = {
     primaryColor: "#000000",
     fontFamily: `var(--font-reformation),${COMMON_FONTS}`,
     logo: "reformation",
-    pickupIcon: "/icons/rf_pickup.svg",
-    doorstepIcon: "/icons/rf_doorstep.svg",
     rounded: false,
     availableDeliveryOptions: "door",
   },
@@ -64,8 +62,6 @@ export const PLATFORMS: Record<string, PlatformTheme> = {
     primaryColor: "#7B189F",
     fontFamily: `var(--font-wayfair),${COMMON_FONTS}`,
     logo: "wayfair",
-    pickupIcon: "/icons/wf_pickup.svg",
-    doorstepIcon: "/icons/wf_doorstep.svg",
     rounded: true,
     availableDeliveryOptions: "door",
   },

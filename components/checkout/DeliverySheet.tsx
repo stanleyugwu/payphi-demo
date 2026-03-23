@@ -135,7 +135,8 @@ export default function DeliverySheet({
     !!doorDetails.address &&
     !!doorDetails.city &&
     !!doorDetails.state &&
-    !!doorDetails.country;
+    !!doorDetails.country &&
+    !!doorDetails.fullname;
   const isPickupValid = !!selectedStation && !!selectedDate && !!selectedTime;
   const isConfirmDisabled =
     (deliveryTab === "door" && !isDoorValid) ||
