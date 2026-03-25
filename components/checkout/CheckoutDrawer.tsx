@@ -424,7 +424,7 @@ export default function CheckoutDrawer() {
                   </p>
                 )}
               </div>
-              <ChevronIcon className="transition-transform group-hover:translate-x-1" />
+              <ChevronIcon className="transition-transform group-hover:translate-x-1 shrink-0" />
             </button>
 
             {/* Payment */}

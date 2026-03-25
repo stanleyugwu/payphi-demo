@@ -47,14 +47,14 @@ export default function CheckoutAnimation({
 
   useEffect(() => {
     const t0 = setTimeout(() => setSliding(true), 30);
-    // const t1 = setTimeout(() => onComplete(), TOTAL_MS);
+    const t1 = setTimeout(() => onComplete(), TOTAL_MS);
     const t2 = setTimeout(() => {
       lottieRef.current?.play();
     }, SLIDE_MS);
 
     return () => {
       clearTimeout(t0);
-      // clearTimeout(t1);
+      clearTimeout(t1);
       clearTimeout(t2);
     };
   }, [onComplete]);
@@ -80,7 +80,7 @@ export default function CheckoutAnimation({
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          gap: 28,
+          gap: 5,
           paddingBottom: "6%",
         }}
       >
