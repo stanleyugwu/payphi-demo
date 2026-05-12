@@ -1,68 +1,71 @@
 /**
  * ============================================================
- * CheckoutSpinner — Apple-Pay-style spinner + checkmark
+ * CheckoutSpinner — implements public/spinner_specification.md
  * ============================================================
  *
- * The arc rhythm:
- *   Fast phase (0–35 %): group rotates ~260°, dashoffset only −40
- *     → tail lags behind the speeding head → arc GROWS
+ * Phase 1 — Indeterminate "elastic spin":
+ *   • Animation A: <svg> container rotates 0° → 360°, LINEAR,
+ *     ~2000 ms per loop. Iterates twice in this deterministic flow
+ *     (the spec calls for `infinite`; here the success trigger is a
+ *     fixed timeout that lands at the end of cycle 2 → 0° top center).
+ *   • Animation B: <circle> stroke-dasharray + stroke-dashoffset
+ *     follow the Material worm pattern:
+ *         0%   small dash, offset 0
+ *         50%  dash = 75% of circumference, offset shifted forward
+ *         100% small dash, offset shifted one full revolution
  *
- *   Slow phase (35–100 %): group finishes last ~100°, dashoffset
- *     covers the remaining −199 units to reach −C
- *     → tail races forward, head barely moves → arc CONTRACTS FROM TAIL
+ * Phase 2 — Determinate "success morph":
+ *   • Worm smoothly grows to a fully closed circle (cspArcClose).
+ *   • Circle scales/fades out (cspArcOut).
+ *   • Checkmark <path> draws via stroke-dashoffset, ease-out.
  *
- *   At 100 %: group = 360° (seamless), dashoffset = −C (pattern
- *     completes exactly one virtual revolution → seamless loop)
- *
- * After SPINNER_SPIN_MS the arc fades, a full ring springs in,
- * and the checkmark draws itself.
- *
- * Customise: size, color. Tweak timing constants at the top.
+ * Both elements share identical stroke-width, stroke-linecap="round",
+ * stroke colour, and fill="none" as the spec requires.
  * ============================================================
  */
 
 "use client";
 
 /* ── Geometry ─────────────────────────────────────────── */
-const R = 38;
-const C = +(2 * Math.PI * R).toFixed(2); // ≈ 238.76
+const R = 28;
+const C = +(2 * Math.PI * R).toFixed(2); // ≈ 238.76 (circumference)
 
-// Arc sizes (circumference units)
-const ARC_MIN = 12; //  ~5 % of C — tiny trailing dot
-const ARC_MAX = 100; // ~42 % of C — full stretch
+// Worm parameters per spec: small dash at extremes, ~75% of C at peak.
+const DASH_SMALL = 12;
+const DASH_MAX = +(0.75 * C).toFixed(2); // ≈ 179.07
+const GAP_SMALL = +(C - DASH_SMALL).toFixed(2);
+const GAP_MAX = +(C - DASH_MAX).toFixed(2);
+const OFFSET_MID = +(0.25 * C).toFixed(2); // dashoffset shift at 50 % keyframe
 
-const GAP_MIN = +(C - ARC_MAX).toFixed(2); // ≈ 138.76
-const GAP_MAX = +(C - ARC_MIN).toFixed(2); // ≈ 226.76
+// Checkmark path inside 100×100 viewBox.
+const CHECK_PATH = "M30,52 L43,65 L68,38";
+const CHECK_LEN = 56;
 
-// dashoffset at peak arc (35 % of cycle): tail lags by 40 units
-const D_PEAK = 40;
-
-// Checkmark (scaled from original SVGator source, 100×100 viewBox)
-const CHECK_PATH = "M31,53 L42,64 L66,39";
-const CHECK_LEN = 51;
+// Shared stroke styling — identical on circle + path per spec.
+const STROKE_WIDTH = 3.5;
 
 /* ── Timing (ms) ───────────────────────────────────────── */
-const SPIN_CYCLE = 1400; // duration of one arc + rotation cycle
-const SPIN_ITERS = 3; // number of spin cycles before checkmark
+const SPIN_DUR = 1200; // ~2 s per loop (Animation A)
+const SPIN_LOOPS = 3; // 2 loops → ends precisely at 0° top center
+const SPIN_PHASE_MS = SPIN_DUR * SPIN_LOOPS;
 
-/** Total spin phase duration */
-export const SPINNER_SPIN_MS = SPIN_CYCLE * SPIN_ITERS; // 4200 ms
+const CLOSE_DUR = 300; // worm → full closed circle
+const FADE_DUR = 220; // circle scales/fades after it closes
+const CHECK_DELAY = CLOSE_DUR - 80; // check starts drawing ~80 ms before circle is gone
+const CHECK_DUR = 420; // ease-out check draw (300–500 ms range per spec)
 
-const ARC_FADE_START = SPINNER_SPIN_MS - 200;
-const ARC_FADE_DUR = 300;
-const RING_DELAY = SPINNER_SPIN_MS;
-const RING_DUR = 500;
-const CHECK_DELAY = SPINNER_SPIN_MS + 200;
-const CHECK_DUR = 500;
+/** Spin phase only — exported so CheckoutAnimation can sync. */
+export const SPINNER_SPIN_MS = SPIN_PHASE_MS;
 
-/** Total animation duration — use this in CheckoutAnimation for onComplete */
-export const SPINNER_TOTAL_MS = SPINNER_SPIN_MS + RING_DUR + CHECK_DUR + 200;
+/** Full animation length, including the morph tail. */
+export const SPINNER_TOTAL_MS =
+  SPIN_PHASE_MS + Math.max(CLOSE_DUR + FADE_DUR, CHECK_DELAY + CHECK_DUR) + 100;
 
 /* ── Component ─────────────────────────────────────────── */
 export interface CheckoutSpinnerProps {
   /** Diameter in px */
   size?: number;
-  /** Stroke colour */
+  /** Shared stroke colour for circle + check */
   color?: string;
 }
 
@@ -71,101 +74,79 @@ export function CheckoutSpinner({
   color = "#ffffff",
 }: CheckoutSpinnerProps) {
   const css = `
-    /* ── Rotation: fast burst then decelerate ── */
-    .csp-rot-g {
-      transform-box:    view-box;
+    /* ── Animation A: linear container spin ──────────── */
+    .csp-svg {
+      animation: cspSpin ${SPIN_DUR}ms linear 0ms ${SPIN_LOOPS} both;
       transform-origin: 50% 50%;
-      animation: cspRot ${SPIN_CYCLE}ms linear 0ms ${SPIN_ITERS} both;
     }
 
-    /* ── Arc: grows on acceleration, tail contracts on decel ── */
+    @keyframes cspSpin {
+      from { transform: rotate(0deg);   }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ── Animation B: the worm (stroke dasharray + offset) ── */
     .csp-arc {
-      fill: none;
-      stroke-dasharray:  ${ARC_MIN} ${GAP_MAX};
+      stroke-dasharray:  ${DASH_SMALL} ${GAP_SMALL};
       stroke-dashoffset: 0;
+      transform-box:     view-box;
+      transform-origin:  50% 50%;
       animation:
-        cspArc     ${SPIN_CYCLE}ms linear 0ms ${SPIN_ITERS} both,
-        cspArcFade ${ARC_FADE_DUR}ms ease   ${ARC_FADE_START}ms forwards;
+        cspWorm     ${SPIN_DUR}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms ${SPIN_LOOPS} both,
+        cspArcClose ${CLOSE_DUR}ms cubic-bezier(0.4, 0, 0.2, 1) ${SPIN_PHASE_MS}ms forwards,
+        cspArcOut   ${FADE_DUR}ms ease ${SPIN_PHASE_MS + CLOSE_DUR}ms forwards;
     }
 
-    /* ── Ring springs in after spin ── */
-    .csp-ring {
-      fill:    none;
-      opacity: 0;
-      animation: cspRingIn ${RING_DUR}ms cubic-bezier(0.22, 1, 0.36, 1) ${RING_DELAY}ms forwards;
-    }
-
-    /* ── Checkmark draws itself ── */
-    .csp-check {
-      fill:              none;
-      stroke-linecap:    round;
-      stroke-linejoin:   round;
-      stroke-dasharray:  ${CHECK_LEN};
-      stroke-dashoffset: ${CHECK_LEN};
-      animation: cspCheckDraw ${CHECK_DUR}ms cubic-bezier(0.22, 1, 0.36, 1) ${CHECK_DELAY}ms forwards;
-    }
-
-    /* ──────────────────────────────────────────────────── */
-
-    /*
-     * Group rotation: non-linear speed achieved by splitting into two
-     * segments — the easing functions create the burst + decelerate feel.
-     *
-     *  0 % →  45 %: rotate  0° → 260°  // fast phase  (cubic ease-in  start)
-     * 45 % → 100 %: rotate 260° → 360° // slow phase  (cubic ease-out finish)
-     */
-    @keyframes cspRot {
-      0%  {
-        transform: rotate(0deg);
-        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      45% {
-        transform: rotate(260deg);
-        animation-timing-function: cubic-bezier(0.6, 0, 1, 1);
-      }
-      100% { transform: rotate(360deg); }
-    }
-
-    /*
-     * Arc dasharray + dashoffset:
-     *
-     *  0 % : tiny arc (12), offset 0        — start of cycle
-     * 35 % : big  arc (100), offset −40     — head raced ahead, tail lagging
-     *                                          arc at maximum size
-     * 100%: tiny arc (12), offset −C        — tail caught up, loop closure
-     *
-     * Between 35 % and 100 % the tail travels ~199 circumference-units
-     * while the head moves only ~40, so the arc collapses FROM THE TAIL.
-     */
-    @keyframes cspArc {
+    @keyframes cspWorm {
       0% {
-        stroke-dasharray:  ${ARC_MIN} ${GAP_MAX};
+        stroke-dasharray:  ${DASH_SMALL} ${GAP_SMALL};
         stroke-dashoffset: 0;
-        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       }
-      35% {
-        stroke-dasharray:  ${ARC_MAX} ${GAP_MIN};
-        stroke-dashoffset: -${D_PEAK};
-        animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
+      50% {
+        stroke-dasharray:  ${DASH_MAX} ${GAP_MAX};
+        stroke-dashoffset: -${OFFSET_MID};
       }
       100% {
-        stroke-dasharray:  ${ARC_MIN} ${GAP_MAX};
+        stroke-dasharray:  ${DASH_SMALL} ${GAP_SMALL};
         stroke-dashoffset: -${C};
       }
     }
 
-    @keyframes cspArcFade { to { opacity: 0; } }
-
-    @keyframes cspRingIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to   { opacity: 1; transform: scale(1);   }
+    /* ── Phase 2 step 1: worm closes into a full ring ── */
+    @keyframes cspArcClose {
+      from {
+        stroke-dasharray:  ${DASH_SMALL} ${GAP_SMALL};
+        stroke-dashoffset: 0;
+      }
+      to {
+        stroke-dasharray:  ${C} 0;
+        stroke-dashoffset: 0;
+      }
     }
 
-    @keyframes cspCheckDraw { to { stroke-dashoffset: 0; } }
+    /* ── Phase 2 step 1b: circle scales + fades out ── */
+    @keyframes cspArcOut {
+      from { opacity: 1; transform: scale(1);   }
+      to   { opacity: 0; transform: scale(0.7); }
+    }
+
+    /* ── Phase 2 step 2: check draws (ease-out) ── */
+    .csp-check {
+      stroke-dasharray:  ${CHECK_LEN};
+      stroke-dashoffset: ${CHECK_LEN};
+      opacity:           0;
+      animation: cspCheckDraw ${CHECK_DUR}ms ease-out ${SPIN_PHASE_MS + CHECK_DELAY}ms forwards;
+    }
+
+    @keyframes cspCheckDraw {
+      from { opacity: 1; stroke-dashoffset: ${CHECK_LEN}; }
+      to   { opacity: 1; stroke-dashoffset: 0; }
+    }
   `;
 
   return (
     <svg
+      className="csp-svg"
       width={size}
       height={size}
       viewBox="0 0 100 100"
@@ -175,35 +156,25 @@ export function CheckoutSpinner({
     >
       <style>{css}</style>
 
-      {/* Phase 1: spinning arc */}
-      <g className="csp-rot-g">
-        <circle
-          className="csp-arc"
-          cx="50"
-          cy="50"
-          r={R}
-          stroke={color}
-          strokeWidth="3.5"
-          strokeLinecap="round"
-        />
-      </g>
-
-      {/* Phase 2: full ring */}
       <circle
-        className="csp-ring"
+        className="csp-arc"
         cx="50"
         cy="50"
         r={R}
+        fill="none"
         stroke={color}
-        strokeWidth="3"
+        strokeWidth={STROKE_WIDTH}
+        strokeLinecap="round"
       />
 
-      {/* Phase 2: checkmark */}
       <path
         className="csp-check"
         d={CHECK_PATH}
+        fill="none"
         stroke={color}
-        strokeWidth="4.5"
+        strokeWidth={STROKE_WIDTH}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
